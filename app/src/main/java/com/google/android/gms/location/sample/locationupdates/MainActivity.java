@@ -166,8 +166,6 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         ImageView imgv1 = findViewById(R.id.imageViewSalleRouge);
         imgv1.setVisibility(View.INVISIBLE);
