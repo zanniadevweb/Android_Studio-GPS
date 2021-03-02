@@ -17,6 +17,7 @@
 package com.google.android.gms.location.sample.locationupdates;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -27,12 +28,19 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -61,6 +69,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 
 /**
@@ -169,6 +178,15 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView imgv1 = findViewById(R.id.imageViewSalleRouge);
         imgv1.setVisibility(View.INVISIBLE);
+
+        ImageView imgv3 = findViewById(R.id.moi);
+        imgv3.setVisibility(View.INVISIBLE);
+
+        TextView tv1 = findViewById(R.id.latitudeSalle1);
+        tv1.setText(String.valueOf(Modele.latitudeCentreSalle));
+
+        TextView tv2 = findViewById(R.id.longitudeSalle1);
+        tv2.setText(String.valueOf(Modele.longitudeCentreSalle));
 
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
@@ -409,9 +427,12 @@ public class MainActivity extends AppCompatActivity {
                     mCurrentLocation.getLatitude()));
 
             Modele.latitude = mCurrentLocation.getLatitude();
-            double latitude_plus_10 = mCurrentLocation.getLatitude() + 10;
             Modele.longitude = mCurrentLocation.getLongitude();
+            double latitude_plus_10 = mCurrentLocation.getLatitude() + 10;
             Modele.updatetime = mLastUpdateTime;
+
+            double latitude = mCurrentLocation.getLatitude();
+            double longitude = mCurrentLocation.getLongitude();
 
             Log.d("loc", "latitude " + Modele.latitude);
             Log.d("loc", "longitude " + Modele.longitude);
@@ -444,15 +465,32 @@ public class MainActivity extends AppCompatActivity {
                 key = iterator.next();
             }
 
+            float[] distance = new float[1];
+
+            Modele.latitudeTempsT = latitude;
+            Modele.longitudeTempsT = longitude;
+            Modele.maPosition = new LatLng(Modele.latitudeTempsT, Modele.longitudeTempsT);
+
+            Integer rayonSalle = 5;
+
+            Location.distanceBetween(
+                    Modele.latitudeTempsT, // Latitude de départ (Moi)
+                    Modele.longitudeTempsT, // Longitude de départ (Moi)
+                    Modele.latitudeCentreSalle, // Latitude de fin (salle)
+                    Modele.longitudeCentreSalle, // Longitude de fin (salle)
+                    distance); // Résultat = distance entre deux points
+
+            //Log.d("loc", "distance " + distance[0]);
+
             // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
-            if (LongitudeSalles.containsValue(Modele.latitude) && LatitudeSalles.containsValue(Modele.longitude)) {
-                Integer compteurEleve = 10;
-                compteurEleve++;
+            if (distance[0] < rayonSalle) {
+                Integer compteurEleveSalle1 = Modele.randomPersonnesParSalle;
+                compteurEleveSalle1++;
                 Log.d("estDansSalle", "Vous êtes dans la " + key);
-                Log.d("élève", "Vous êtes le " + compteurEleve + "e élève dans cette salle");
-                Integer limiteNombreEleve = 10;
-                if (compteurEleve > limiteNombreEleve) {
-                    Log.d("salleIndisponible", "Désolé, la salle vous est fermée d'accès car la limite est de " + limiteNombreEleve + " élèves dans cette salle");
+                Log.d("élève", "Vous êtes le " + compteurEleveSalle1 + "e élève dans cette salle");
+                Integer limiteNombreEleveSalle1 = 10;
+                if (compteurEleveSalle1 > limiteNombreEleveSalle1) {
+                    Log.d("salleIndisponible", "Désolé, la salle vous est fermée d'accès car la limite est de " + limiteNombreEleveSalle1 + " élèves dans cette salle");
                     ImageView imgv1 = findViewById(R.id.imageViewSalleVerte);
                     imgv1.setVisibility(View.INVISIBLE);
                     ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
@@ -460,14 +498,38 @@ public class MainActivity extends AppCompatActivity {
                     TextView tv1 = findViewById(R.id.librepaslibre);
                     tv1.setText("La salle 1 est indisponible");
                 }
+                ImageView imgv3 = findViewById(R.id.moi);
+                imgv3.setVisibility(View.VISIBLE);
+                TextView tv2 = findViewById(R.id.mapositionsalle);
+                tv2.setText("Je suis dans la salle 1 à environ " + distance[0] + " mètres du centre de celle-ci");
+            }
+            else {
+                ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
+                imgv2.setVisibility(View.INVISIBLE);
+                ImageView imgv1 = findViewById(R.id.imageViewSalleVerte);
+                imgv1.setVisibility(View.VISIBLE);
+                ImageView imgv3 = findViewById(R.id.moi);
+                imgv3.setVisibility(View.INVISIBLE);
+
+                TextView tv2 = findViewById(R.id.mapositionsalle);
+                tv2.setText("Je ne suis PAS dans la salle 1");
             }
 
             mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
                     mCurrentLocation.getLongitude()));
             mLastUpdateTimeTextView.setText(String.format(Locale.ENGLISH, "%s: %s",
                     mLastUpdateTimeLabel, mLastUpdateTime));
+
         }
     }
+
+    public void onGenerateRandomNumber(View view) {
+        Modele.randomPersonnesParSalle = new Random().nextInt(10) + 1; // [0, 1] + 1 => [1, 2] : Minimum 1 (si [0] + 1) et maximum 10 (si [1] + 1)
+        TextView tv1 = findViewById(R.id.nombrePersonnesActuelSalle);
+        tv1.setText(String.valueOf(Modele.randomPersonnesParSalle));
+    }
+
+
 
     /**
      * Removes location updates from the FusedLocationApi.
