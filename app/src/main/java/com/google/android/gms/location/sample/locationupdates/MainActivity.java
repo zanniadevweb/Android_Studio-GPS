@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mStartUpdatesButton;
     private Button mStopUpdatesButton;
     private Button RegenererPositionSalles;
+    private Button GenererUnNombre;
     private TextView mLastUpdateTimeTextView;
     private TextView mLatitudeTextView;
     private TextView mLongitudeTextView;
@@ -177,19 +178,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        ImageView imgv1 = findViewById(R.id.imageViewSalleRouge);
+        ImageView imgv1 = findViewById(R.id.imageViewSalleRouge1);
         imgv1.setVisibility(View.INVISIBLE);
 
-        ImageView imgv2 = findViewById(R.id.imageViewSalleVerte);
+        ImageView imgv2 = findViewById(R.id.imageViewSalleVerte1);
         imgv2.setVisibility(View.VISIBLE);
 
-        ImageView imgv3 = findViewById(R.id.moi);
+        ImageView imgv3 = findViewById(R.id.moi1);
         imgv3.setVisibility(View.INVISIBLE);
+
+        ImageView imgv4 = findViewById(R.id.imageViewSalleRouge2);
+        imgv4.setVisibility(View.INVISIBLE);
+
+        ImageView imgv5 = findViewById(R.id.imageViewSalleVerte2);
+        imgv5.setVisibility(View.VISIBLE);
+
+        ImageView imgv6 = findViewById(R.id.moi2);
+        imgv6.setVisibility(View.INVISIBLE);
 
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
         mStopUpdatesButton = (Button) findViewById(R.id.stop_updates_button);
         RegenererPositionSalles = (Button) findViewById(R.id.regenererPositionsSalles);
+        GenererUnNombre = (Button) findViewById(R.id.generernombrealeatoire);
         mLatitudeTextView = (TextView) findViewById(R.id.latitude_text);
         mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
         mLastUpdateTimeTextView = (TextView) findViewById(R.id.last_update_time_text);
@@ -412,18 +423,32 @@ public class MainActivity extends AppCompatActivity {
             mStartUpdatesButton.setEnabled(false);
             mStopUpdatesButton.setEnabled(true);
             RegenererPositionSalles.setEnabled(true);
+            GenererUnNombre.setEnabled(false);
         } else {
             mStartUpdatesButton.setEnabled(true);
             mStopUpdatesButton.setEnabled(false);
             RegenererPositionSalles.setEnabled(false);
+            GenererUnNombre.setEnabled(true);
+            ImageView imgv3 = findViewById(R.id.moi1);
+            imgv3.setVisibility(View.INVISIBLE);
+            ImageView imgv6 = findViewById(R.id.moi2);
+            imgv6.setVisibility(View.INVISIBLE);
+            Modele.compteurEleveSalle1 = Modele.randomPersonnesSalle1;
+            Modele.compteurEleveSalle2 = Modele.randomPersonnesSalle2;
+            TextView tv1 = findViewById(R.id.nombrePersonnesActuelSalle1);
+            tv1.setText(String.valueOf(Modele.compteurEleveSalle1));
+            TextView tv2 = findViewById(R.id.nombrePersonnesActuelSalle2);
+            tv2.setText(String.valueOf(Modele.compteurEleveSalle2));
         }
     }
 
     private void fixerPositionsSalles() {
             final double latitudeTempsTConstant = Modele.latitudeTempsT;
             final double longitudeTempsTConstant = Modele.longitudeTempsT;
-            Modele.latitudeCentreSalleDynamique=latitudeTempsTConstant + Modele.dixMetresLatitude;
-            Modele.longitudeCentreSalleDynamique=longitudeTempsTConstant + Modele.dixMetresLongitude;
+            Modele.latitudeCentreSalleUneDynamique=latitudeTempsTConstant;
+            Modele.longitudeCentreSalleUneDynamique=longitudeTempsTConstant;
+            Modele.latitudeCentreSalleDeuxDynamique=latitudeTempsTConstant + Modele.quinzeMetresLatitude;
+            Modele.longitudeCentreSalleDeuxDynamique=longitudeTempsTConstant + Modele.quinzeMetresLongitude;
     }
 
     public void regenererPositionsSalles(View view) {
@@ -436,131 +461,237 @@ public class MainActivity extends AppCompatActivity {
     private void updateLocationUI() {
         if (mCurrentLocation != null) {
 
+            /* -------------------------------------------------------------------------------------------------------------------------------------*/
+            /* ----------------------------------------- LOCALISATION AUTOMATIQUE ------------------------------------------------------------------*/
+            /* -------------------------------------------------------------------------------------------------------------------------------------*/
+
             mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel, mCurrentLocation.getLatitude()));
 
             Modele.updatetime = mLastUpdateTime;
 
             Modele.latitudeTempsT = mCurrentLocation.getLatitude();
-            //final double latitudeTempsTConstant = Modele.latitudeTempsT;
             Modele.longitudeTempsT = mCurrentLocation.getLongitude();
-            //final double longitudeTempsTConstant = Modele.longitudeTempsT;
 
             if (Modele.valeursLongLatAttribuees) {
                 fixerPositionsSalles();
                 Modele.valeursLongLatAttribuees = false;
             }
 
-            //Modele.latitudeCentreSalleDynamique=latitudeTempsTConstant + Modele.dixMetresLatitude;
-            //Modele.longitudeCentreSalleDynamique=longitudeTempsTConstant + Modele.dixMetresLongitude;
+            mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel, mCurrentLocation.getLongitude()));
+            mLastUpdateTimeTextView.setText(String.format(Locale.ENGLISH, "%s: %s", mLastUpdateTimeLabel, mLastUpdateTime));
+
+            /* -------------------------------------------------------------------------------------------------------------------------------------*/
+            /* ----------------------------------------- STOCKAGE COORDONNES DES SALLES ------------------------------------------------------------*/
+            /* -------------------------------------------------------------------------------------------------------------------------------------*/
 
             HashMap<String, Double> LongitudeSalles = new HashMap<>();
             HashMap<String, Double> LatitudeSalles = new HashMap<>();
 
-            final double longitudeCentreSalleConstant = Modele.longitudeCentreSalleDynamique; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 10 mètres converti en une distance en latitude)
-            final double latitudeCentreSalleConstant = Modele.latitudeCentreSalleDynamique; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 10 mètres converti en une distance en longitude)
+            final double longitudeCentreSalleConstant1 = Modele.longitudeCentreSalleUneDynamique; // Centre salle (x) (Fixé à la même position que l'utilisateur)
+            final double latitudeCentreSalleConstant1 = Modele.latitudeCentreSalleUneDynamique; // Centre salle (y) (Fixé à la même position que l'utilisateur)
 
-            LongitudeSalles.put("Salle1", latitudeCentreSalleConstant); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
-            LatitudeSalles.put("Salle1", longitudeCentreSalleConstant); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
+            final double longitudeCentreSalleConstant2 = Modele.longitudeCentreSalleDeuxDynamique; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en latitude)
+            final double latitudeCentreSalleConstant2 = Modele.latitudeCentreSalleDeuxDynamique; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en longitude)
 
-            Log.d("Array", "Longitude Salle 1 " + longitudeCentreSalleConstant);
-            Log.d("Array", "Latitude Salle 1 " + latitudeCentreSalleConstant);
+            LongitudeSalles.put("Salle1", latitudeCentreSalleConstant1); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
+            LatitudeSalles.put("Salle1", longitudeCentreSalleConstant1); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
 
+            LongitudeSalles.put("Salle2", latitudeCentreSalleConstant2); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
+            LatitudeSalles.put("Salle2", longitudeCentreSalleConstant2); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
+
+            Log.d ("1","long1 : " + longitudeCentreSalleConstant1);
+            Log.d ("2","lat1 : " + latitudeCentreSalleConstant1);
+
+            Log.d ("3","long2 : " + longitudeCentreSalleConstant2);
+            Log.d ("4","lat2 : " + latitudeCentreSalleConstant2);
+
+
+            // ---------------- A CORRIGER --------------
 
             // Obtenir la première valeur du Hash Map
+            /*
             Iterator<String> iteratorLong = LongitudeSalles.keySet().iterator();
             Iterator<String> iteratorLat = LongitudeSalles.keySet().iterator();
+             */
             Iterator<String> iteratorNomSalle = LongitudeSalles.keySet().iterator();
-
-            Double valueLongitude = null;
+/*
+            Double valueLongitude1 = null;
+            Double valueLongitude2 = null;
             if(iteratorLong.hasNext()){
-                valueLongitude =LongitudeSalles.get( iteratorLong.next() );
+                valueLongitude1 = LongitudeSalles.get( iteratorLong.next() );
+                valueLongitude2 = LongitudeSalles.get(1);
             }
 
-            Double valueLatitude = null;
+            Double valueLatitude1 = null;
+            Double valueLatitude2 = null;
             if(iteratorLat.hasNext()){
-                valueLatitude =LatitudeSalles.get( iteratorLat.next() );
+                valueLatitude1 = LatitudeSalles.get( iteratorLat.next() );
+                valueLatitude2 = LongitudeSalles.get(1);
             }
-
+*/
             String key = null;
             if(iteratorNomSalle.hasNext()){
                 key = iteratorNomSalle.next();
             }
 
+            // ---------------- A CORRIGER --------------
+
+            Integer rayonSalle = 5; // Le rayon d'une salle en mètres
+
+            float[] distanceSalle1 = new float[1];
+            float[] distanceSalle2 = new float[1];
+
+            /* -------------------------------------------------------------------------------------------------------------------------------------*/
+            /* ----------------------------------------- SALLE 1 -----------------------------------------------------------------------------------*/
+            /* -------------------------------------------------------------------------------------------------------------------------------------*/
+
             TextView tv1 = findViewById(R.id.longitudeValeurSalle1);
-            //tv1.setText(String.valueOf(valueLongitude));
-            tv1.setText(String.valueOf(latitudeCentreSalleConstant));
+            //tv1.setText(String.valueOf(valueLongitude1)); // ---------------- A CORRIGER --------------
+            tv1.setText(String.valueOf(longitudeCentreSalleConstant1));
 
             TextView tv2 = findViewById(R.id.latitudeValeurSalle1);
-            //tv2.setText(String.valueOf(valueLatitude));
-            tv2.setText(String.valueOf(longitudeCentreSalleConstant));
-
-            float[] distance = new float[1];
-
-            Modele.maPosition = new LatLng(Modele.latitudeTempsT, Modele.longitudeTempsT);
-
-            Integer rayonSalle = 5;
+            //tv2.setText(String.valueOf(valueLatitude1)); // ---------------- A CORRIGER --------------
+            tv2.setText(String.valueOf(latitudeCentreSalleConstant1));
 
             Location.distanceBetween(
                     Modele.latitudeTempsT, // Latitude de départ (Moi)
                     Modele.longitudeTempsT, // Longitude de départ (Moi)
-                    latitudeCentreSalleConstant, // Latitude de fin (salle)
-                    longitudeCentreSalleConstant, // Longitude de fin (salle)
-                    distance); // Résultat = distance entre deux points
+                    latitudeCentreSalleConstant1, // Latitude de fin (salle)
+                    longitudeCentreSalleConstant1, // Longitude de fin (salle)
+                    distanceSalle1); // Résultat = distance entre deux points
 
             // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
-            if (distance[0]/2 < rayonSalle) {
-                Integer compteurEleveSalle1 = Modele.randomPersonnesParSalle;
-                compteurEleveSalle1++;
+            if (distanceSalle1[0]/2 < rayonSalle && Modele.estDansSalle1) { // || distanceSalle1[0]/2 < distanceSalle2[0]/2
+                Modele.compteurEleveSalle1 = Modele.randomPersonnesSalle1;
+                Modele.compteurEleveSalle1++;
+                TextView tv0 = findViewById(R.id.nombrePersonnesActuelSalle1);
+                tv0.setText(String.valueOf(Modele.compteurEleveSalle1));
                 Log.d("estDansSalle", "Vous êtes dans la " + key);
-                Log.d("élève", "Vous êtes le " + compteurEleveSalle1 + "e élève dans cette salle");
+                Log.d("élève", "Vous êtes le " + Modele.compteurEleveSalle1 + "e élève dans cette salle");
                 Integer limiteNombreEleveSalle1 = 10;
-                if (compteurEleveSalle1 > limiteNombreEleveSalle1) {
+                if (Modele.compteurEleveSalle1 > limiteNombreEleveSalle1) {
                     Log.d("salleIndisponible", "Désolé, la salle vous est fermée d'accès car la limite est de " + limiteNombreEleveSalle1 + " élèves dans cette salle");
-                    ImageView imgv1 = findViewById(R.id.imageViewSalleVerte);
+                    ImageView imgv1 = findViewById(R.id.imageViewSalleVerte1);
                     imgv1.setVisibility(View.INVISIBLE);
-                    ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
+                    ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
                     imgv2.setVisibility(View.VISIBLE);
-                    TextView tv3 = findViewById(R.id.librepaslibre);
-                    tv3.setText("La " + key + " est indisponible");
+                    TextView tv3 = findViewById(R.id.librepaslibre1);
+                    //tv3.setText("La " + key + " est indisponible"); // ---------------- A CORRIGER --------------
+                    tv3.setText("La Salle1 est indisponible");
                 }
-                if (compteurEleveSalle1 < limiteNombreEleveSalle1) {
-                    ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
+                if (Modele.compteurEleveSalle1 <= limiteNombreEleveSalle1) {
+                    ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
                     imgv2.setVisibility(View.INVISIBLE);
-                    ImageView imgv1 = findViewById(R.id.imageViewSalleVerte);
+                    ImageView imgv1 = findViewById(R.id.imageViewSalleVerte1);
                     imgv1.setVisibility(View.VISIBLE);
-                    TextView tv3 = findViewById(R.id.librepaslibre);
-                    tv3.setText("La " + key + " est libre pour l'instant");
+                    TextView tv3 = findViewById(R.id.librepaslibre1);
+                    //tv3.setText("La " + key + " est libre pour l'instant"); // ---------------- A CORRIGER --------------
+                    tv3.setText("La Salle1 est libre");
                 }
-                ImageView imgv3 = findViewById(R.id.moi);
+                ImageView imgv3 = findViewById(R.id.moi1);
                 imgv3.setVisibility(View.VISIBLE);
-                TextView tv4 = findViewById(R.id.mapositionsalle);
-                tv4.setText("Je suis dans la " + key + " à environ " + distance[0]/2 + " mètres du centre de celle-ci");
+                TextView tv4 = findViewById(R.id.mapositionsalle1);
+                //tv4.setText("Je suis dans la " + key + " à environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci"); // ---------------- A CORRIGER --------------
+                tv4.setText("Je suis dans la Salle1 à environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci");
+                Modele.estDansSalle2 = false;
             }
-            if (distance[0]/2 > rayonSalle) {
-                ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
-                imgv2.setVisibility(View.INVISIBLE);
-                ImageView imgv1 = findViewById(R.id.imageViewSalleVerte);
+            if (distanceSalle1[0]/2 > rayonSalle && !(Modele.estDansSalle1)) { // || distanceSalle1[0]/2 > distanceSalle2[0]/2
+                ImageView imgv1 = findViewById(R.id.imageViewSalleVerte1);
                 imgv1.setVisibility(View.VISIBLE);
-                ImageView imgv3 = findViewById(R.id.moi);
+                ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
+                imgv2.setVisibility(View.INVISIBLE);
+                ImageView imgv3 = findViewById(R.id.moi1);
                 imgv3.setVisibility(View.INVISIBLE);
-                //TextView tv4 = findViewById(R.id.mapositionsalle);
+                //TextView tv4 = findViewById(R.id.mapositionsalle); // ---------------- A CORRIGER --------------
                 //tv4.setText("Je ne suis PAS dans la " + key);
-                TextView tv4 = findViewById(R.id.mapositionsalle);
-                tv4.setText("Je ne suis PAS dans la " + key + ". Je suis à une distance d'environ " + distance[0]/2 + " mètres du centre de celle-ci");
+                TextView tv4 = findViewById(R.id.mapositionsalle1);
+                //tv4.setText("Je ne suis PAS dans la " + key + ". Je suis à une distance d'environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci"); // ---------------- A CORRIGER --------------
+                tv4.setText("Je ne suis PAS dans la Salle1. Je suis à une distance d'environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci");
+                Modele.estDansSalle2 = true;
             }
 
-            mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
-                    mCurrentLocation.getLongitude()));
-            mLastUpdateTimeTextView.setText(String.format(Locale.ENGLISH, "%s: %s",
-                    mLastUpdateTimeLabel, mLastUpdateTime));
+
+            /* -------------------------------------------------------------------------------------------------------------------------------------*/
+            /* ----------------------------------------- SALLE 2 -----------------------------------------------------------------------------------*/
+            /* -------------------------------------------------------------------------------------------------------------------------------------*/
+
+
+            TextView tv3 = findViewById(R.id.longitudeValeurSalle2);
+            //tv3.setText(String.valueOf(valueLongitude2));  // ---------------- A CORRIGER --------------
+            tv3.setText(String.valueOf(longitudeCentreSalleConstant2));
+
+
+            TextView tv4 = findViewById(R.id.latitudeValeurSalle2);
+            //tv4.setText(String.valueOf(valueLatitude2)); // ---------------- A CORRIGER --------------
+            tv4.setText(String.valueOf(latitudeCentreSalleConstant2));
+
+            Location.distanceBetween(
+                    Modele.latitudeTempsT, // Latitude de départ (Moi)
+                    Modele.longitudeTempsT, // Longitude de départ (Moi)
+                    latitudeCentreSalleConstant2, // Latitude de fin (salle)
+                    longitudeCentreSalleConstant2, // Longitude de fin (salle)
+                    distanceSalle2); // Résultat = distance entre deux points
+
+            // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
+            if (distanceSalle2[0]/2 < rayonSalle && Modele.estDansSalle2) { // || distanceSalle2[0]/2 < distanceSalle1[0]/2
+                Modele.compteurEleveSalle2 = Modele.randomPersonnesSalle2;
+                Modele.compteurEleveSalle2++;
+                TextView tv0 = findViewById(R.id.nombrePersonnesActuelSalle2);
+                tv0.setText(String.valueOf(Modele.compteurEleveSalle2));
+                Log.d("estDansSalle", "Vous êtes dans la " + key);
+                Log.d("élève", "Vous êtes le " + Modele.compteurEleveSalle2 + "e élève dans cette salle");
+                Integer limiteNombreEleveSalle2 = 10;
+                if (Modele.compteurEleveSalle2 > limiteNombreEleveSalle2) {
+                    Log.d("salleIndisponible", "Désolé, la salle vous est fermée d'accès car la limite est de " + limiteNombreEleveSalle2 + " élèves dans cette salle");
+                    ImageView imgv2 = findViewById(R.id.imageViewSalleVerte2);
+                    imgv2.setVisibility(View.INVISIBLE);
+                    ImageView imgv3 = findViewById(R.id.imageViewSalleRouge2);
+                    imgv3.setVisibility(View.VISIBLE);
+                    TextView tv5 = findViewById(R.id.librepaslibre2);
+                    tv5.setText("La " + key + " est indisponible");
+                }
+                if (Modele.compteurEleveSalle2 <= limiteNombreEleveSalle2) {
+                    ImageView imgv2 = findViewById(R.id.imageViewSalleVerte2);
+                    imgv2.setVisibility(View.VISIBLE);
+                    ImageView imgv3 = findViewById(R.id.imageViewSalleRouge2);
+                    imgv3.setVisibility(View.INVISIBLE);
+                    TextView tv5 = findViewById(R.id.librepaslibre2);
+                    tv5.setText("La " + key + " est libre");
+                }
+                ImageView imgv4 = findViewById(R.id.moi2);
+                imgv4.setVisibility(View.VISIBLE);
+                TextView tv6 = findViewById(R.id.mapositionsalle2);
+                tv6.setText("Je suis dans la " + key + " à environ " + distanceSalle2[0]/2 + " mètres du centre de celle-ci");
+                Modele.estDansSalle1 = false;
+            }
+            if (distanceSalle2[0]/2 > rayonSalle && !(Modele.estDansSalle2)) { // || distanceSalle2[0]/2 > distanceSalle1[0]/2
+                ImageView imgv3 = findViewById(R.id.imageViewSalleRouge2);
+                imgv3.setVisibility(View.INVISIBLE);
+                ImageView imgv2 = findViewById(R.id.imageViewSalleVerte2);
+                imgv2.setVisibility(View.VISIBLE);
+                ImageView imgv4 = findViewById(R.id.moi2);
+                imgv4.setVisibility(View.INVISIBLE);
+                //TextView tv6 = findViewById(R.id.mapositionsalle2);
+                //tv6.setText("Je ne suis PAS dans la " + key);
+                TextView tv6 = findViewById(R.id.mapositionsalle2);
+                tv6.setText("Je ne suis PAS dans la " + key + ". Je suis à une distance d'environ " + distanceSalle2[0]/2 + " mètres du centre de celle-ci");
+                Modele.estDansSalle1 = true;
+            }
+
+
+            Log.d ("5","dist1 : " + String.valueOf(distanceSalle1[0]));
+            Log.d ("6","dist2 : " + String.valueOf(distanceSalle2[0]));
 
         }
     }
 
     public void onGenerateRandomNumber(View view) {
-        Modele.randomPersonnesParSalle = new Random().nextInt(10) + 1; // [0, 1] + 1 => [1, 2] : Minimum 1 (si [0] + 1) et maximum 10 (si [1] + 1)
-        TextView tv1 = findViewById(R.id.nombrePersonnesActuelSalle);
-        tv1.setText(String.valueOf(Modele.randomPersonnesParSalle));
+        Modele.randomPersonnesSalle1 = new Random().nextInt(10) + 1; // [0, 1] + 1 => [1, 2] : Minimum 1 (si [0] + 1) et maximum 10 (si [1] + 1)
+        Modele.randomPersonnesSalle2 = new Random().nextInt(10) + 1; // [0, 1] + 1 => [1, 2] : Minimum 1 (si [0] + 1) et maximum 10 (si [1] + 1)
+        TextView tv1 = findViewById(R.id.nombrePersonnesActuelSalle1);
+        tv1.setText(String.valueOf(Modele.randomPersonnesSalle1));
+        TextView tv2 = findViewById(R.id.nombrePersonnesActuelSalle2);
+        tv2.setText(String.valueOf(Modele.randomPersonnesSalle2));
     }
 
 

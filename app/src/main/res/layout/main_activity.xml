@@ -27,16 +27,16 @@
 
     <Button
         android:id="@+id/start_updates_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="101dp"
+        android:layout_height="64dp"
         android:onClick="startUpdatesButtonHandler"
         android:text="@string/start_updates"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.185"
+        app:layout_constraintHorizontal_bias="0.06"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.404" />
+        app:layout_constraintVertical_bias="0.158" />
 
     <Button
         android:id="@+id/generernombrealeatoire"
@@ -46,23 +46,23 @@
         android:text="Générer un nombre (1-10)"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.074"
+        app:layout_constraintHorizontal_bias="0.104"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.576" />
+        app:layout_constraintVertical_bias="0.259" />
 
     <Button
         android:id="@+id/regenererPositionsSalles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="137dp"
+        android:layout_height="68dp"
         android:onClick="regenererPositionsSalles"
         android:text="Regénérer position salles"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintHorizontal_bias="0.464"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.486" />
+        app:layout_constraintVertical_bias="0.164" />
 
     <TextView
         android:id="@+id/coordonneesSalle1"
@@ -130,7 +130,72 @@
         app:layout_constraintVertical_bias="0.859" />
 
     <TextView
-        android:id="@+id/nombrePersonnesActuelSalle"
+        android:id="@+id/coordonneesSalle2"
+        android:layout_width="122dp"
+        android:layout_height="60dp"
+        android:text="Coordonnées salle 2 :"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.438" />
+
+    <TextView
+        android:id="@+id/latitudeSalle2"
+        android:layout_width="122dp"
+        android:layout_height="60dp"
+        android:text="lat :"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499" />
+
+    <TextView
+        android:id="@+id/latitudeValeurSalle2"
+        android:layout_width="96dp"
+        android:layout_height="25dp"
+        android:text="0"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.047"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.501" />
+
+    <TextView
+        android:id="@+id/longitudeSalle2"
+        android:layout_width="122dp"
+        android:layout_height="60dp"
+        android:text="long :"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.564" />
+
+    <TextView
+        android:id="@+id/longitudeValeurSalle2"
+        android:layout_width="115dp"
+        android:layout_height="23dp"
+        android:text="0"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.587" />
+
+    <TextView
+        android:id="@+id/nombrePersonnesActuelSalle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
@@ -155,19 +220,45 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.772" />
 
-    <Button
-        android:id="@+id/stop_updates_button"
+    <TextView
+        android:id="@+id/nombrePersonnesActuelSalle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.81"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499" />
+
+    <TextView
+        android:id="@+id/nombrePersonnesMaxSalle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="/ 10 pers."
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499" />
+
+    <Button
+        android:id="@+id/stop_updates_button"
+        android:layout_width="108dp"
+        android:layout_height="68dp"
         android:enabled="false"
         android:onClick="stopUpdatesButtonHandler"
         android:text="@string/stop_updates"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.802"
+        app:layout_constraintHorizontal_bias="0.947"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.404" />
+        app:layout_constraintVertical_bias="0.164" />
 
     <TextView
         android:id="@+id/latitude_text"
@@ -177,10 +268,10 @@
         android:textSize="@dimen/default_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.127"
+        app:layout_constraintHorizontal_bias="0.046"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.074" />
+        app:layout_constraintVertical_bias="0.022" />
 
     <TextView
         android:id="@+id/longitude_text"
@@ -190,36 +281,10 @@
         android:textSize="@dimen/default_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.132"
+        app:layout_constraintHorizontal_bias="0.051"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.115" />
-
-    <TextView
-        android:id="@+id/xCursor_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="X"
-        android:textSize="@dimen/default_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.174"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.33" />
-
-    <TextView
-        android:id="@+id/yCursor_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Y"
-        android:textSize="@dimen/default_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.603"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.33" />
+        app:layout_constraintVertical_bias="0.066" />
 
     <TextView
         android:id="@+id/last_update_time_text"
@@ -229,25 +294,38 @@
         android:textSize="@dimen/default_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.189"
+        app:layout_constraintHorizontal_bias="0.072"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.157" />
+        app:layout_constraintVertical_bias="0.11" />
 
     <TextView
-        android:id="@+id/librepaslibre"
+        android:id="@+id/librepaslibre1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="La salle 1 est libre pour l'instant"
-        android:textSize="@dimen/default_text_size"
+        android:text="La salle 1 est libre"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/location_inadequate_warning"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.102"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.679" />
+        app:layout_constraintVertical_bias="0.343" />
 
     <ImageView
-        android:id="@+id/imageViewSalleRouge"
+        android:id="@+id/imageViewNord"
+        android:layout_width="145dp"
+        android:layout_height="65dp"
+        android:src="@drawable/nord"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.021" />
+
+    <ImageView
+        android:id="@+id/imageViewSalleRouge1"
         android:layout_width="209dp"
         android:layout_height="101dp"
         android:src="@drawable/rouge"
@@ -258,7 +336,7 @@
         app:layout_constraintVertical_bias="0.811" />
 
     <ImageView
-        android:id="@+id/imageViewSalleVerte"
+        android:id="@+id/imageViewSalleVerte1"
         android:layout_width="209dp"
         android:layout_height="101dp"
         android:src="@drawable/vert"
@@ -267,6 +345,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.811" />
+
+    <TextView
+        android:id="@+id/librepaslibre2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="La salle 2 est libre"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/location_inadequate_warning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.343" />
+
+    <ImageView
+        android:id="@+id/imageViewSalleRouge2"
+        android:layout_width="209dp"
+        android:layout_height="101dp"
+        android:src="@drawable/rouge"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewSalleVerte2"
+        android:layout_width="209dp"
+        android:layout_height="101dp"
+        android:src="@drawable/vert"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/location_inadequate_warning"
@@ -282,7 +393,7 @@
         app:layout_constraintVertical_bias="0.976" />
 
     <ImageView
-        android:id="@+id/moi"
+        android:id="@+id/moi1"
         android:layout_width="46dp"
         android:layout_height="47dp"
         android:src="@drawable/moi"
@@ -294,15 +405,51 @@
         app:layout_constraintVertical_bias="0.783" />
 
 
+    <ImageView
+        android:id="@+id/couloir"
+        android:layout_width="282dp"
+        android:layout_height="174dp"
+        android:src="@drawable/couloir"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.68" />
+
+    <ImageView
+        android:id="@+id/moi2"
+        android:layout_width="46dp"
+        android:layout_height="47dp"
+        android:src="@drawable/moi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
-        android:id="@+id/mapositionsalle"
-        android:layout_width="223dp"
-        android:layout_height="83dp"
+        android:id="@+id/mapositionsalle1"
+        android:layout_width="149dp"
+        android:layout_height="71dp"
         android:text="Je ne suis PAS dans la salle 1"
-        android:textSize="@dimen/default_text_size"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/location_inadequate_warning"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.537"
+        app:layout_constraintHorizontal_bias="0.079"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/mapositionsalle2"
+        android:layout_width="159dp"
+        android:layout_height="72dp"
+        android:text="Je ne suis PAS dans la salle2"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/location_inadequate_warning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.907"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
