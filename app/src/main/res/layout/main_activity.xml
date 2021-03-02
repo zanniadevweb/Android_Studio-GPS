@@ -78,6 +78,19 @@
         app:layout_constraintVertical_bias="0.798" />
 
     <TextView
+        android:id="@+id/latitudeValeurSalle1"
+        android:layout_width="96dp"
+        android:layout_height="25dp"
+        android:text="0"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.788" />
+
+    <TextView
         android:id="@+id/longitudeSalle1"
         android:layout_width="122dp"
         android:layout_height="60dp"
@@ -89,6 +102,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.868" />
+
+    <TextView
+        android:id="@+id/longitudeValeurSalle1"
+        android:layout_width="102dp"
+        android:layout_height="26dp"
+        android:text="0"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.859" />
 
     <TextView
         android:id="@+id/nombrePersonnesActuelSalle"

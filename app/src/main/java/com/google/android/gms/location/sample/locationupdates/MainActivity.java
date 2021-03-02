@@ -179,14 +179,11 @@ public class MainActivity extends AppCompatActivity {
         ImageView imgv1 = findViewById(R.id.imageViewSalleRouge);
         imgv1.setVisibility(View.INVISIBLE);
 
+        ImageView imgv2 = findViewById(R.id.imageViewSalleVerte);
+        imgv2.setVisibility(View.VISIBLE);
+
         ImageView imgv3 = findViewById(R.id.moi);
         imgv3.setVisibility(View.INVISIBLE);
-
-        TextView tv1 = findViewById(R.id.latitudeSalle1);
-        tv1.setText(String.valueOf(Modele.latitudeCentreSalle));
-
-        TextView tv2 = findViewById(R.id.longitudeSalle1);
-        tv2.setText(String.valueOf(Modele.longitudeCentreSalle));
 
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
@@ -441,29 +438,38 @@ public class MainActivity extends AppCompatActivity {
             HashMap<String, Double> LongitudeSalles = new HashMap<>();
             HashMap<String, Double> LatitudeSalles = new HashMap<>();
 
-            LongitudeSalles.put("Salle1", 44.8377883); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
-            LatitudeSalles.put("Salle1", -0.5791783); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
+            LongitudeSalles.put("Salle1", Modele.longitudeCentreSalle); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
+            LatitudeSalles.put("Salle1", Modele.latitudeCentreSalle); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
 
             Log.d("Array", "Longitude Salle 1 " + LongitudeSalles);
             Log.d("Array", "Latitude Salle 1 " + LatitudeSalles);
 
-            /*
+
             // Obtenir la première valeur du Hash Map
-            Iterator<String> iterator = LongitudeSalles.keySet().iterator();
+            Iterator<String> iteratorLong = LongitudeSalles.keySet().iterator();
+            Iterator<String> iteratorLat = LongitudeSalles.keySet().iterator();
+            Iterator<String> iteratorNomSalle = LongitudeSalles.keySet().iterator();
 
-            Double value = null;
-            if(iterator.hasNext()){
-                value =LongitudeSalles.get( iterator.next() );
-            }*/
+            Double valueLongitude = null;
+            if(iteratorLong.hasNext()){
+                valueLongitude =LongitudeSalles.get( iteratorLong.next() );
+            }
 
-
-            // Obtenir la première clée du Hash Map
-            Iterator<String> iterator = LongitudeSalles.keySet().iterator();
+            Double valueLatitude = null;
+            if(iteratorLat.hasNext()){
+                valueLatitude =LatitudeSalles.get( iteratorLat.next() );
+            }
 
             String key = null;
-            if(iterator.hasNext()){
-                key = iterator.next();
+            if(iteratorNomSalle.hasNext()){
+                key = iteratorNomSalle.next();
             }
+
+            TextView tv1 = findViewById(R.id.longitudeValeurSalle1);
+            tv1.setText(String.valueOf(valueLongitude));
+
+            TextView tv2 = findViewById(R.id.latitudeValeurSalle1);
+            tv2.setText(String.valueOf(valueLatitude));
 
             float[] distance = new float[1];
 
@@ -480,8 +486,6 @@ public class MainActivity extends AppCompatActivity {
                     Modele.longitudeCentreSalle, // Longitude de fin (salle)
                     distance); // Résultat = distance entre deux points
 
-            //Log.d("loc", "distance " + distance[0]);
-
             // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
             if (distance[0] < rayonSalle) {
                 Integer compteurEleveSalle1 = Modele.randomPersonnesParSalle;
@@ -495,24 +499,31 @@ public class MainActivity extends AppCompatActivity {
                     imgv1.setVisibility(View.INVISIBLE);
                     ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
                     imgv2.setVisibility(View.VISIBLE);
-                    TextView tv1 = findViewById(R.id.librepaslibre);
-                    tv1.setText("La salle 1 est indisponible");
+                    TextView tv3 = findViewById(R.id.librepaslibre);
+                    tv3.setText("La " + key + " est indisponible");
+                }
+                if (compteurEleveSalle1 < limiteNombreEleveSalle1) {
+                    ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
+                    imgv2.setVisibility(View.INVISIBLE);
+                    ImageView imgv1 = findViewById(R.id.imageViewSalleVerte);
+                    imgv1.setVisibility(View.VISIBLE);
+                    TextView tv3 = findViewById(R.id.librepaslibre);
+                    tv3.setText("La " + key + " est libre pour l'instant");
                 }
                 ImageView imgv3 = findViewById(R.id.moi);
                 imgv3.setVisibility(View.VISIBLE);
-                TextView tv2 = findViewById(R.id.mapositionsalle);
-                tv2.setText("Je suis dans la salle 1 à environ " + distance[0] + " mètres du centre de celle-ci");
+                TextView tv4 = findViewById(R.id.mapositionsalle);
+                tv4.setText("Je suis dans la " + key + " à environ " + distance[0] + " mètres du centre de celle-ci");
             }
-            else {
+            if (distance[0] > rayonSalle) {
                 ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
                 imgv2.setVisibility(View.INVISIBLE);
                 ImageView imgv1 = findViewById(R.id.imageViewSalleVerte);
                 imgv1.setVisibility(View.VISIBLE);
                 ImageView imgv3 = findViewById(R.id.moi);
                 imgv3.setVisibility(View.INVISIBLE);
-
-                TextView tv2 = findViewById(R.id.mapositionsalle);
-                tv2.setText("Je ne suis PAS dans la salle 1");
+                TextView tv4 = findViewById(R.id.mapositionsalle);
+                tv4.setText("Je ne suis PAS dans la " + key);
             }
 
             mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
