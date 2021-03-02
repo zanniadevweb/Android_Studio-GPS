@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
     // UI Widgets.
     private Button mStartUpdatesButton;
     private Button mStopUpdatesButton;
+    private Button RegenererPositionSalles;
     private TextView mLastUpdateTimeTextView;
     private TextView mLatitudeTextView;
     private TextView mLongitudeTextView;
@@ -188,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
         mStopUpdatesButton = (Button) findViewById(R.id.stop_updates_button);
+        RegenererPositionSalles = (Button) findViewById(R.id.regenererPositionsSalles);
         mLatitudeTextView = (TextView) findViewById(R.id.latitude_text);
         mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
         mLastUpdateTimeTextView = (TextView) findViewById(R.id.last_update_time_text);
@@ -409,10 +411,23 @@ public class MainActivity extends AppCompatActivity {
         if (mRequestingLocationUpdates) {
             mStartUpdatesButton.setEnabled(false);
             mStopUpdatesButton.setEnabled(true);
+            RegenererPositionSalles.setEnabled(true);
         } else {
             mStartUpdatesButton.setEnabled(true);
             mStopUpdatesButton.setEnabled(false);
+            RegenererPositionSalles.setEnabled(false);
         }
+    }
+
+    private void fixerPositionsSalles() {
+            final double latitudeTempsTConstant = Modele.latitudeTempsT;
+            final double longitudeTempsTConstant = Modele.longitudeTempsT;
+            Modele.latitudeCentreSalleDynamique=latitudeTempsTConstant + Modele.dixMetresLatitude;
+            Modele.longitudeCentreSalleDynamique=longitudeTempsTConstant + Modele.dixMetresLongitude;
+    }
+
+    public void regenererPositionsSalles(View view) {
+        Modele.valeursLongLatAttribuees = true;
     }
 
     /**
@@ -420,29 +435,35 @@ public class MainActivity extends AppCompatActivity {
      */
     private void updateLocationUI() {
         if (mCurrentLocation != null) {
-            mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel,
-                    mCurrentLocation.getLatitude()));
 
-            Modele.latitude = mCurrentLocation.getLatitude();
-            Modele.longitude = mCurrentLocation.getLongitude();
-            double latitude_plus_10 = mCurrentLocation.getLatitude() + 10;
+            mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel, mCurrentLocation.getLatitude()));
+
             Modele.updatetime = mLastUpdateTime;
 
-            double latitude = mCurrentLocation.getLatitude();
-            double longitude = mCurrentLocation.getLongitude();
+            Modele.latitudeTempsT = mCurrentLocation.getLatitude();
+            //final double latitudeTempsTConstant = Modele.latitudeTempsT;
+            Modele.longitudeTempsT = mCurrentLocation.getLongitude();
+            //final double longitudeTempsTConstant = Modele.longitudeTempsT;
 
-            Log.d("loc", "latitude " + Modele.latitude);
-            Log.d("loc", "longitude " + Modele.longitude);
-            Log.d("loc", "latitude_plus_10 " + latitude_plus_10); // Test pour augmenter la latitude
+            if (Modele.valeursLongLatAttribuees) {
+                fixerPositionsSalles();
+                Modele.valeursLongLatAttribuees = false;
+            }
+
+            //Modele.latitudeCentreSalleDynamique=latitudeTempsTConstant + Modele.dixMetresLatitude;
+            //Modele.longitudeCentreSalleDynamique=longitudeTempsTConstant + Modele.dixMetresLongitude;
 
             HashMap<String, Double> LongitudeSalles = new HashMap<>();
             HashMap<String, Double> LatitudeSalles = new HashMap<>();
 
-            LongitudeSalles.put("Salle1", Modele.longitudeCentreSalle); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
-            LatitudeSalles.put("Salle1", Modele.latitudeCentreSalle); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
+            final double longitudeCentreSalleConstant = Modele.longitudeCentreSalleDynamique; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 10 mètres converti en une distance en latitude)
+            final double latitudeCentreSalleConstant = Modele.latitudeCentreSalleDynamique; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 10 mètres converti en une distance en longitude)
 
-            Log.d("Array", "Longitude Salle 1 " + LongitudeSalles);
-            Log.d("Array", "Latitude Salle 1 " + LatitudeSalles);
+            LongitudeSalles.put("Salle1", latitudeCentreSalleConstant); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
+            LatitudeSalles.put("Salle1", longitudeCentreSalleConstant); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
+
+            Log.d("Array", "Longitude Salle 1 " + longitudeCentreSalleConstant);
+            Log.d("Array", "Latitude Salle 1 " + latitudeCentreSalleConstant);
 
 
             // Obtenir la première valeur du Hash Map
@@ -466,15 +487,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             TextView tv1 = findViewById(R.id.longitudeValeurSalle1);
-            tv1.setText(String.valueOf(valueLongitude));
+            //tv1.setText(String.valueOf(valueLongitude));
+            tv1.setText(String.valueOf(latitudeCentreSalleConstant));
 
             TextView tv2 = findViewById(R.id.latitudeValeurSalle1);
-            tv2.setText(String.valueOf(valueLatitude));
+            //tv2.setText(String.valueOf(valueLatitude));
+            tv2.setText(String.valueOf(longitudeCentreSalleConstant));
 
             float[] distance = new float[1];
 
-            Modele.latitudeTempsT = latitude;
-            Modele.longitudeTempsT = longitude;
             Modele.maPosition = new LatLng(Modele.latitudeTempsT, Modele.longitudeTempsT);
 
             Integer rayonSalle = 5;
@@ -482,12 +503,12 @@ public class MainActivity extends AppCompatActivity {
             Location.distanceBetween(
                     Modele.latitudeTempsT, // Latitude de départ (Moi)
                     Modele.longitudeTempsT, // Longitude de départ (Moi)
-                    Modele.latitudeCentreSalle, // Latitude de fin (salle)
-                    Modele.longitudeCentreSalle, // Longitude de fin (salle)
+                    latitudeCentreSalleConstant, // Latitude de fin (salle)
+                    longitudeCentreSalleConstant, // Longitude de fin (salle)
                     distance); // Résultat = distance entre deux points
 
             // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
-            if (distance[0] < rayonSalle) {
+            if (distance[0]/2 < rayonSalle) {
                 Integer compteurEleveSalle1 = Modele.randomPersonnesParSalle;
                 compteurEleveSalle1++;
                 Log.d("estDansSalle", "Vous êtes dans la " + key);
@@ -513,17 +534,19 @@ public class MainActivity extends AppCompatActivity {
                 ImageView imgv3 = findViewById(R.id.moi);
                 imgv3.setVisibility(View.VISIBLE);
                 TextView tv4 = findViewById(R.id.mapositionsalle);
-                tv4.setText("Je suis dans la " + key + " à environ " + distance[0] + " mètres du centre de celle-ci");
+                tv4.setText("Je suis dans la " + key + " à environ " + distance[0]/2 + " mètres du centre de celle-ci");
             }
-            if (distance[0] > rayonSalle) {
+            if (distance[0]/2 > rayonSalle) {
                 ImageView imgv2 = findViewById(R.id.imageViewSalleRouge);
                 imgv2.setVisibility(View.INVISIBLE);
                 ImageView imgv1 = findViewById(R.id.imageViewSalleVerte);
                 imgv1.setVisibility(View.VISIBLE);
                 ImageView imgv3 = findViewById(R.id.moi);
                 imgv3.setVisibility(View.INVISIBLE);
+                //TextView tv4 = findViewById(R.id.mapositionsalle);
+                //tv4.setText("Je ne suis PAS dans la " + key);
                 TextView tv4 = findViewById(R.id.mapositionsalle);
-                tv4.setText("Je ne suis PAS dans la " + key);
+                tv4.setText("Je ne suis PAS dans la " + key + ". Je suis à une distance d'environ " + distance[0]/2 + " mètres du centre de celle-ci");
             }
 
             mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
