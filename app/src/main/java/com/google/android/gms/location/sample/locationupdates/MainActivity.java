@@ -429,16 +429,29 @@ public class MainActivity extends AppCompatActivity {
             mStopUpdatesButton.setEnabled(false);
             RegenererPositionSalles.setEnabled(false);
             GenererUnNombre.setEnabled(true);
+            ImageView imgv1 = findViewById(R.id.imageViewSalleRouge2);
+            imgv1.setVisibility(View.INVISIBLE);
+            ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
+            imgv2.setVisibility(View.INVISIBLE);
             ImageView imgv3 = findViewById(R.id.moi1);
             imgv3.setVisibility(View.INVISIBLE);
+            ImageView imgv4 = findViewById(R.id.imageViewSalleVerte1);
+            imgv4.setVisibility(View.VISIBLE);
+            ImageView imgv5 = findViewById(R.id.imageViewSalleVerte2);
+            imgv5.setVisibility(View.VISIBLE);
             ImageView imgv6 = findViewById(R.id.moi2);
             imgv6.setVisibility(View.INVISIBLE);
             Modele.compteurEleveSalle1 = Modele.randomPersonnesSalle1;
             Modele.compteurEleveSalle2 = Modele.randomPersonnesSalle2;
+
             TextView tv1 = findViewById(R.id.nombrePersonnesActuelSalle1);
             tv1.setText(String.valueOf(Modele.compteurEleveSalle1));
             TextView tv2 = findViewById(R.id.nombrePersonnesActuelSalle2);
             tv2.setText(String.valueOf(Modele.compteurEleveSalle2));
+            TextView tv3 = findViewById(R.id.librepaslibre1);
+            tv3.setText("La Salle1 est libre");
+            TextView tv4 = findViewById(R.id.librepaslibre2);
+            tv4.setText("La Salle1 est libre");
         }
     }
 
