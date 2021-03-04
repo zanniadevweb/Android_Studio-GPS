@@ -63,6 +63,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -179,22 +180,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
 
         ImageView imgv1 = findViewById(R.id.imageViewSalleRouge1);
-        imgv1.setVisibility(View.INVISIBLE);
-
         ImageView imgv2 = findViewById(R.id.imageViewSalleVerte1);
-        imgv2.setVisibility(View.VISIBLE);
-
         ImageView imgv3 = findViewById(R.id.moi1);
-        imgv3.setVisibility(View.INVISIBLE);
-
         ImageView imgv4 = findViewById(R.id.imageViewSalleRouge2);
-        imgv4.setVisibility(View.INVISIBLE);
-
         ImageView imgv5 = findViewById(R.id.imageViewSalleVerte2);
-        imgv5.setVisibility(View.VISIBLE);
-
         ImageView imgv6 = findViewById(R.id.moi2);
-        imgv6.setVisibility(View.INVISIBLE);
+
+        View[] views1 = {imgv1, imgv3, imgv4, imgv6 };
+        for (View view : views1) {
+            view.setVisibility(View.INVISIBLE);
+        }
+
+        View[] views2 = {imgv2, imgv5   };
+        for (View view : views2) {
+            view.setVisibility(View.VISIBLE);
+        }
 
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
@@ -429,29 +429,35 @@ public class MainActivity extends AppCompatActivity {
             mStopUpdatesButton.setEnabled(false);
             RegenererPositionSalles.setEnabled(false);
             GenererUnNombre.setEnabled(true);
-            ImageView imgv1 = findViewById(R.id.imageViewSalleRouge2);
-            imgv1.setVisibility(View.INVISIBLE);
-            ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
-            imgv2.setVisibility(View.INVISIBLE);
-            ImageView imgv3 = findViewById(R.id.moi1);
-            imgv3.setVisibility(View.INVISIBLE);
-            ImageView imgv4 = findViewById(R.id.imageViewSalleVerte1);
-            imgv4.setVisibility(View.VISIBLE);
-            ImageView imgv5 = findViewById(R.id.imageViewSalleVerte2);
-            imgv5.setVisibility(View.VISIBLE);
-            ImageView imgv6 = findViewById(R.id.moi2);
-            imgv6.setVisibility(View.INVISIBLE);
-            Modele.compteurEleveSalle1 = Modele.randomPersonnesSalle1;
-            Modele.compteurEleveSalle2 = Modele.randomPersonnesSalle2;
 
+            ImageView imgv1 = findViewById(R.id.imageViewSalleRouge2);
+            ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
+            ImageView imgv3 = findViewById(R.id.moi1);
+            ImageView imgv4 = findViewById(R.id.imageViewSalleVerte1);
+            ImageView imgv5 = findViewById(R.id.imageViewSalleVerte2);
+            ImageView imgv6 = findViewById(R.id.moi2);
             TextView tv1 = findViewById(R.id.nombrePersonnesActuelSalle1);
             tv1.setText(String.valueOf(Modele.compteurEleveSalle1));
             TextView tv2 = findViewById(R.id.nombrePersonnesActuelSalle2);
             tv2.setText(String.valueOf(Modele.compteurEleveSalle2));
             TextView tv3 = findViewById(R.id.librepaslibre1);
-            tv3.setText("La Salle1 est libre");
             TextView tv4 = findViewById(R.id.librepaslibre2);
+
+            View[] views1 = {imgv1, imgv2, imgv3, imgv6  };
+            for (View view : views1) {
+                view.setVisibility(View.INVISIBLE);
+            }
+
+            View[] views2 = {imgv4, imgv5  };
+            for (View view : views2) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            tv3.setText("La Salle1 est libre");
             tv4.setText("La Salle1 est libre");
+
+            Modele.compteurEleveSalle1 = Modele.randomPersonnesSalle1;
+            Modele.compteurEleveSalle2 = Modele.randomPersonnesSalle2;
         }
     }
 
@@ -474,6 +480,9 @@ public class MainActivity extends AppCompatActivity {
     private void updateLocationUI() {
         if (mCurrentLocation != null) {
 
+
+            Log.d("lat", "c" + mCurrentLocation.getLatitude());
+            Log.d("long", "c" + mCurrentLocation.getLongitude());
             /* -------------------------------------------------------------------------------------------------------------------------------------*/
             /* ----------------------------------------- LOCALISATION AUTOMATIQUE ------------------------------------------------------------------*/
             /* -------------------------------------------------------------------------------------------------------------------------------------*/
@@ -481,9 +490,6 @@ public class MainActivity extends AppCompatActivity {
             mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel, mCurrentLocation.getLatitude()));
 
             Modele.updatetime = mLastUpdateTime;
-
-            Modele.latitudeTempsT = mCurrentLocation.getLatitude();
-            Modele.longitudeTempsT = mCurrentLocation.getLongitude();
 
             if (Modele.valeursLongLatAttribuees) {
                 fixerPositionsSalles();
@@ -500,11 +506,36 @@ public class MainActivity extends AppCompatActivity {
             HashMap<String, Double> LongitudeSalles = new HashMap<>();
             HashMap<String, Double> LatitudeSalles = new HashMap<>();
 
-            final double longitudeCentreSalleConstant1 = Modele.longitudeCentreSalleUneDynamique; // Centre salle (x) (Fixé à la même position que l'utilisateur)
-            final double latitudeCentreSalleConstant1 = Modele.latitudeCentreSalleUneDynamique; // Centre salle (y) (Fixé à la même position que l'utilisateur)
+            //final double longitudeCentreSalleConstant1 = Modele.longitudeCentreSalleUneDynamique; // Centre salle (x) (Fixé à la même position que l'utilisateur)
+            //final double latitudeCentreSalleConstant1 = Modele.latitudeCentreSalleUneDynamique; // Centre salle (y) (Fixé à la même position que l'utilisateur)
 
-            final double longitudeCentreSalleConstant2 = Modele.longitudeCentreSalleDeuxDynamique; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en latitude)
-            final double latitudeCentreSalleConstant2 = Modele.latitudeCentreSalleDeuxDynamique; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en longitude)
+            final double longitudeCentreSalleConstant1 = 43.4790169876426; // Centre salle (x) (Fixé à la même position que l'utilisateur)
+            final double latitudeCentreSalleConstant1 = -1.5199598282479023; // Centre salle (y) (Fixé à la même position que l'utilisateur)
+
+            //final double longitudeCentreSalleConstant2 = Modele.longitudeCentreSalleDeuxDynamique; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en latitude)
+            //final double latitudeCentreSalleConstant2 = Modele.latitudeCentreSalleDeuxDynamique; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en longitude)
+
+            final double longitudeCentreSalleConstant2 = 43.478717258988226; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en latitude)
+            final double latitudeCentreSalleConstant2 = -1.5198391311262884; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en longitude)
+
+            float[] distance = new float[1];
+
+            LatLng moi = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            LatLng dehors = new LatLng(-1.5198391311262884, 43.478717258988226);
+
+            double testLat = mCurrentLocation.getLatitude();
+            double longmoi = (int)(Math.round(testLat * 10000000))/10000000.0; // Récupérer le résultat Google Maps 7 chiffres après la virgule
+            double testLong = mCurrentLocation.getLongitude();
+            double latmoi = (int)(Math.round(testLong * 10000000))/10000000.0; // Récupérer le résultat Google Maps 7 chiffres après la virgule
+
+            Location.distanceBetween(
+                    latmoi , // Moi
+                    longmoi, // Moi
+                    -1.5198117, // Dehors devant chez moi
+                    43.4790377, // Dehors devant chez moi
+                    distance); // Résultat = distance entre deux points
+
+            Log.d ("DISTANCE", "dist" + distance[0]);
 
             LongitudeSalles.put("Salle1", latitudeCentreSalleConstant1); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
             LatitudeSalles.put("Salle1", longitudeCentreSalleConstant1); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
@@ -567,14 +598,19 @@ public class MainActivity extends AppCompatActivity {
             tv2.setText(String.valueOf(latitudeCentreSalleConstant1));
 
             Location.distanceBetween(
-                    Modele.latitudeTempsT, // Latitude de départ (Moi)
-                    Modele.longitudeTempsT, // Longitude de départ (Moi)
+                    latitudeCentreSalleConstant2, // Latitude de départ (Moi)
+                    latitudeCentreSalleConstant2, // Longitude de départ (Moi)
                     latitudeCentreSalleConstant1, // Latitude de fin (salle)
                     longitudeCentreSalleConstant1, // Longitude de fin (salle)
                     distanceSalle1); // Résultat = distance entre deux points
 
+
+
+
+            Log.d ("distsalle1", "dist" + distanceSalle1);
+
             // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
-            if (distanceSalle1[0]/2 < rayonSalle && Modele.estDansSalle1) { // || distanceSalle1[0]/2 < distanceSalle2[0]/2
+            if (distanceSalle1[0]/2 < rayonSalle ) { // || distanceSalle1[0]/2 < distanceSalle2[0]/2    && Modele.estDansSalle1
                 Modele.compteurEleveSalle1 = Modele.randomPersonnesSalle1;
                 Modele.compteurEleveSalle1++;
                 TextView tv0 = findViewById(R.id.nombrePersonnesActuelSalle1);
@@ -608,7 +644,7 @@ public class MainActivity extends AppCompatActivity {
                 tv4.setText("Je suis dans la Salle1 à environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci");
                 Modele.estDansSalle2 = false;
             }
-            if (distanceSalle1[0]/2 > rayonSalle && !(Modele.estDansSalle1)) { // || distanceSalle1[0]/2 > distanceSalle2[0]/2
+            if (distanceSalle1[0]/2 > rayonSalle ) { // || distanceSalle1[0]/2 > distanceSalle2[0]/2             && !(Modele.estDansSalle1)
                 ImageView imgv1 = findViewById(R.id.imageViewSalleVerte1);
                 imgv1.setVisibility(View.VISIBLE);
                 ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
@@ -640,13 +676,15 @@ public class MainActivity extends AppCompatActivity {
 
             Location.distanceBetween(
                     Modele.latitudeTempsT, // Latitude de départ (Moi)
-                    Modele.longitudeTempsT, // Longitude de départ (Moi)
+                    Modele.longitudeTempsT , // Longitude de départ (Moi)
                     latitudeCentreSalleConstant2, // Latitude de fin (salle)
                     longitudeCentreSalleConstant2, // Longitude de fin (salle)
                     distanceSalle2); // Résultat = distance entre deux points
 
+            Log.d ("distsalle2", "dist" + distanceSalle2);
+
             // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
-            if (distanceSalle2[0]/2 < rayonSalle && Modele.estDansSalle2) { // || distanceSalle2[0]/2 < distanceSalle1[0]/2
+            if (distanceSalle2[0]/2 < rayonSalle ) { // || distanceSalle2[0]/2 < distanceSalle1[0]/2   && Modele.estDansSalle2
                 Modele.compteurEleveSalle2 = Modele.randomPersonnesSalle2;
                 Modele.compteurEleveSalle2++;
                 TextView tv0 = findViewById(R.id.nombrePersonnesActuelSalle2);
@@ -677,7 +715,7 @@ public class MainActivity extends AppCompatActivity {
                 tv6.setText("Je suis dans la " + key + " à environ " + distanceSalle2[0]/2 + " mètres du centre de celle-ci");
                 Modele.estDansSalle1 = false;
             }
-            if (distanceSalle2[0]/2 > rayonSalle && !(Modele.estDansSalle2)) { // || distanceSalle2[0]/2 > distanceSalle1[0]/2
+            if (distanceSalle2[0]/2 > rayonSalle ) { // || distanceSalle2[0]/2 > distanceSalle1[0]/2           && !(Modele.estDansSalle2)
                 ImageView imgv3 = findViewById(R.id.imageViewSalleRouge2);
                 imgv3.setVisibility(View.INVISIBLE);
                 ImageView imgv2 = findViewById(R.id.imageViewSalleVerte2);
