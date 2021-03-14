@@ -55,7 +55,7 @@
         android:id="@+id/generernombrealeatoire"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onGenerateRandomNumber"
+        android:onClick="genererNombreUsagesParSalle"
         android:text="@string/genererNombreAleatoire_label"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -208,7 +208,7 @@
         app:layout_constraintVertical_bias="0.587" />
 
     <TextView
-        android:id="@+id/nombrePersonnesActuelSalle1"
+        android:id="@+id/nombreUsagersActuelSalle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
@@ -221,7 +221,7 @@
         app:layout_constraintVertical_bias="0.772" />
 
     <TextView
-        android:id="@+id/nombrePersonnesMaxSalle1"
+        android:id="@+id/nombreUsagersMaxSalle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/surDixPers_label"
@@ -234,7 +234,7 @@
         app:layout_constraintVertical_bias="0.772" />
 
     <TextView
-        android:id="@+id/nombrePersonnesActuelSalle2"
+        android:id="@+id/nombreUsagersActuelSalle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
@@ -247,7 +247,7 @@
         app:layout_constraintVertical_bias="0.499" />
 
     <TextView
-        android:id="@+id/nombrePersonnesMaxSalle2"
+        android:id="@+id/nombreUsagersMaxSalle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/surDixPers_label"
