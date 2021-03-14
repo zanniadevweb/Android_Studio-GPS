@@ -442,6 +442,19 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
+        android:id="@+id/malocalisationsalle1"
+        android:layout_width="152dp"
+        android:layout_height="36dp"
+        android:text="Je suis à une distance de ? de la salle 1"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/location_inadequate_warning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.079"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
         android:id="@+id/mapositionsalle2"
         android:layout_width="159dp"
         android:layout_height="72dp"
@@ -450,6 +463,19 @@
         app:layout_constraintBottom_toBottomOf="@+id/location_inadequate_warning"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.907"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/malocalisationsalle2"
+        android:layout_width="161dp"
+        android:layout_height="48dp"
+        android:text="Je suis à une distance de ? de la salle 2"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/location_inadequate_warning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.908"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
