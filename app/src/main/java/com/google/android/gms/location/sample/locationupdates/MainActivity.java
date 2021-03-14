@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Met à jour les valeurs des champs de l'UI :
+     * Méthode qui s'applique lorsque localisation a été autorisée et activée -- Met à jour les valeurs des champs de l'UI :
      * - La localisation (latitude, longitude) et temps de dernière localisation en temps réel.
      * - Nombres d'individus par salle
      * - Couleur des salles (rouge et vert)
@@ -558,20 +558,20 @@ public class MainActivity extends AppCompatActivity {
             Location.distanceBetween(
                     maLongitudeMoinsPrecise, // Latitude de départ (Moi)
                     maLatitudeMoinsPrecise, // Longitude de départ (Moi)
-                    latitudeCentreSalleConstant1, // Latitude de fin (salle1)
-                    longitudeCentreSalleConstant1, // Longitude de fin (salle1)
+                    latitudeCentreSalleConstant1, // Latitude du centre de la Salle 1
+                    longitudeCentreSalleConstant1, // Longitude du centre de la Salle 1
                     distanceSalle1); // Résultat = distance entre deux coordonnées géographiques
 
             TextView tv8 = findViewById(R.id.maDistanceSalle1);
             tv8.setText("Je suis à environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci");
 
             // Si la distance entre ma localisation et celle du centre de la Salle 1 est inférieure au rayon de la Salle 1... alors je me trouve dans cette salle
-            if (distanceSalle1[0] < rayonSalle) {
+            if (distanceSalle1[0] < rayonSalle && !(Localisation.estDansSalle2)) { // On vérifie que je ne suis pas déjà dans la salle 2 : évite les doublons d'icône de position
                 // On récupère le nombre d'usagers actuels générés aléatoirement via le bouton 'genererNombreUsagesParSalle'
                 Salle.compteurUsagersSalle1 = Salle.randomUsagersSalle1;
 
                 // Je me trouve dans cette salle, on augmente donc le nombre d'usagers actuels de 1
-                Salle.compteurUsagersSalle1++;
+                Salle.compteurUsagersSalle1++; /* /!\ Remarque : je n'ai pas réussi à identifier comment programmer le cas où l'utilisateur quitte la salle pour décrémenter ce compteur /!\ -> Mettre un while sur la condition fait crasher l'application */
                 TextView tv0 = findViewById(R.id.nombreUsagersActuelSalle1);
                 tv0.setText(String.valueOf(Salle.compteurUsagersSalle1));
 
@@ -618,7 +618,7 @@ public class MainActivity extends AppCompatActivity {
                 // On affiche la salle en vert (elle est à nouveau disponible)
                 ImageView imgv1 = findViewById(R.id.imageViewSalleVerte1);
                 imgv1.setVisibility(View.VISIBLE);
-                // On l'empêche de devenir rouge
+                // On empêche la salle de devenir rouge
                 ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
                 imgv2.setVisibility(View.INVISIBLE);
                 // On masque l'icône de ma localisation
@@ -647,20 +647,20 @@ public class MainActivity extends AppCompatActivity {
             Location.distanceBetween(
                     maLongitudeMoinsPrecise, // Latitude de départ (Moi)
                     maLatitudeMoinsPrecise, // Longitude de départ (Moi)
-                    latitudeCentreSalleConstant2, // Latitude de fin (salle2)
-                    longitudeCentreSalleConstant2, // Longitude de fin (salle2)
+                    latitudeCentreSalleConstant2, // Latitude du centre de la Salle 2
+                    longitudeCentreSalleConstant2, // Longitude du centre de la Salle 2
                     distanceSalle2); // Résultat = distance entre deux coordonnées géographiques
 
             TextView tv7 = findViewById(R.id.maDistanceSalle2);
             tv7.setText("Je suis à environ " + distanceSalle2[0]/2 + " mètres du centre de celle-ci");
 
             // Si la distance entre ma localisation et celle du centre de la Salle 2 est inférieure au rayon de la Salle 2... alors je me trouve dans cette salle
-            if (distanceSalle2[0] < rayonSalle) {
+            if (distanceSalle2[0] < rayonSalle && !(Localisation.estDansSalle1)) { // On vérifie que je ne suis pas déjà dans la salle 1 : évite les doublons d'icône de position
                 // On récupère le nombre d'usagers actuels générés aléatoirement via le bouton 'genererNombreUsagesParSalle'
                 Salle.compteurUsagersSalle2 = Salle.randomUsagersSalle2;
 
                 // Je me trouve dans cette salle, on augmente donc le nombre d'usagers actuels de 1
-                Salle.compteurUsagersSalle2++;
+                Salle.compteurUsagersSalle2++; /* /!\ Remarque : je n'ai pas réussi à identifier comment programmer le cas où l'utilisateur quitte la salle pour décrémenter ce compteur /!\ -> Mettre un while sur la condition fait crasher l'application */
                 TextView tv0 = findViewById(R.id.nombreUsagersActuelSalle2);
                 tv0.setText(String.valueOf(Salle.compteurUsagersSalle2));
 
@@ -707,7 +707,7 @@ public class MainActivity extends AppCompatActivity {
                 // On affiche la salle en vert (elle est à nouveau disponible)
                 ImageView imgv2 = findViewById(R.id.imageViewSalleVerte2);
                 imgv2.setVisibility(View.VISIBLE);
-                // On l'empêche de devenir rouge
+                // On empêche la salle de devenir rouge
                 ImageView imgv3 = findViewById(R.id.imageViewSalleRouge2);
                 imgv3.setVisibility(View.INVISIBLE);
                 // On masque l'icône de ma localisation
@@ -761,8 +761,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        // Within {@code onPause()}, we remove location updates. Here, we resume receiving
-        // location updates if the user has requested them.
+        // Durant {@code onPause()}, on enlève la mise à jour de la localisation. Ici, on reçoit en résultat
+        // les mises à jour de localisation si l'utilisateur les a demandé.
         if (mDemandeMiseAJourLocalisation && verifierPermissions()) {
             commencerLocalisation();
         } else if (!verifierPermissions()) {
