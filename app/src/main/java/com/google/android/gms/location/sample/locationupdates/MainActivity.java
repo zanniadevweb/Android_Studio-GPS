@@ -460,26 +460,47 @@ public class MainActivity extends AppCompatActivity {
             tv3.setText(getString(R.string.estLibre1_label));
             tv4.setText(getString(R.string.estLibre2_label));
 
+            // Remet à zéro le fait que je ne sois PAS dans la Salle 1 ou la Salle 2
+            TextView tv5 = findViewById(R.id.mapositionsalle1);
+            tv5.setText(getString(R.string.pasSalle1_label));
+            TextView tv6 = findViewById(R.id.mapositionsalle2);
+            tv6.setText(getString(R.string.pasSalle2_label));
+
             // Remet à zéro le nombre d'usagers dans chaque salle
             Salle.compteurUsagersSalle1 = 0;
             Salle.compteurUsagersSalle2 = 0;
+            TextView tv7 = findViewById(R.id.nombreUsagersActuelSalle1);
+            tv7.setText(String.valueOf(Salle.compteurUsagersSalle1));
+            TextView tv8 = findViewById(R.id.nombreUsagersActuelSalle2);
+            tv8.setText(String.valueOf(Salle.compteurUsagersSalle2));
+
+            // Remet à zéro le nombre aléatoire pour générer un certain nombre d'usagers dans chaque salle
+            Salle.randomUsagersSalle1 = 0;
+            Salle.randomUsagersSalle2 = 0;
+
+            // Remet à zéro l'affichage des calculs de distance
+            TextView tv9 = findViewById(R.id.maDistanceSalle1);
+            tv9.setText(getString(R.string.distanceSalle1_label));
+            TextView tv10 = findViewById(R.id.maDistanceSalle2);
+            tv10.setText(getString(R.string.distanceSalle2_label));
         }
     }
 
     private void fixerPositionsSalles() {
-            // Mes coordonnées géographiques en temps réel récupérés à un temps t lorsqu'on appuie sur le bouton
+            // Mes coordonnées géographiques en temps réel récupérés à un temps t lorsqu'on appuie sur le bouton 'regenererPositionsSalles'
             final double latitudeTempsTConstant = Localisation.latitudeTempsT;
             final double longitudeTempsTConstant = Localisation.longitudeTempsT;
 
-            // Les coordonnées géographiques de la Salle 1 sont fixés à ma position lorsque j'appuie sur le bouton
+            // Les coordonnées géographiques de la Salle 1 sont fixés à ma position lorsque j'appuie sur le bouton 'regenererPositionsSalles'
             Salle.latitudeCentreSalleUneDynamique=latitudeTempsTConstant;
             Salle.longitudeCentreSalleUneDynamique=longitudeTempsTConstant;
 
-            // Les coordonnées géographiques de la Salle 2 sont fixés à ma position + 15 mètres vers l'Est lorsque j'appuie sur le bouton
+            // Les coordonnées géographiques de la Salle 2 sont fixés à ma position + 15 mètres vers l'Est lorsque j'appuie sur le bouton 'regenererPositionsSalles'
             Salle.latitudeCentreSalleDeuxDynamique=latitudeTempsTConstant + Salle.quinzeMetresLatitude;
             Salle.longitudeCentreSalleDeuxDynamique=longitudeTempsTConstant + Salle.quinzeMetresLongitude;
     }
 
+    // Méthode qui permet de rédéclencher la méthode fixerPositionsSalles entre chaque mise à jour de localisation
     public void regenererPositionsSalles(View view) {
         Localisation.valeursLongLatAttribuees = true;
     }
@@ -497,16 +518,19 @@ public class MainActivity extends AppCompatActivity {
             /* ----------------------------------------- GESTION AFFICHAGE PROPRE A LA LOCALISATION AUTOMATIQUE DE L'UTILISATEUR -------------------*/
             /* -------------------------------------------------------------------------------------------------------------------------------------*/
 
-            mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel, mLocalisationActuelle.getLatitude()));
-
-            Localisation.updatetime = mLastUpdateTime;
-
+            // Permet de rédéclencher le bouton 'regenererPositionsSalles' entre chaque mise à jour de localisation
             if (Localisation.valeursLongLatAttribuees) {
                 fixerPositionsSalles();
                 Localisation.valeursLongLatAttribuees = false;
             }
 
+            // Latitude et longitude récupérée à chaque mise à jour de localisation
+            mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel, mLocalisationActuelle.getLatitude()));
             mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel, mLocalisationActuelle.getLongitude()));
+
+            Localisation.updatetime = mLastUpdateTime;
+
+            // Temps de la dernière mise à jour de localisation récupérée à chaque mise à jour de localisation
             mLastUpdateTimeTextView.setText(String.format(Locale.ENGLISH, "%s: %s", mLastUpdateTimeLabel, mLastUpdateTime));
 
             /* -------------------------------------------------------------------------------------------------------------------------------------*/
@@ -562,6 +586,7 @@ public class MainActivity extends AppCompatActivity {
                     longitudeCentreSalleConstant1, // Longitude du centre de la Salle 1
                     distanceSalle1); // Résultat = distance entre deux coordonnées géographiques
 
+            // Affichage de la distance précédemment calculée
             TextView tv8 = findViewById(R.id.maDistanceSalle1);
             tv8.setText("Je suis à environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci");
 
@@ -651,6 +676,7 @@ public class MainActivity extends AppCompatActivity {
                     longitudeCentreSalleConstant2, // Longitude du centre de la Salle 2
                     distanceSalle2); // Résultat = distance entre deux coordonnées géographiques
 
+            // Affichage de la distance précédemment calculée
             TextView tv7 = findViewById(R.id.maDistanceSalle2);
             tv7.setText("Je suis à environ " + distanceSalle2[0]/2 + " mètres du centre de celle-ci");
 
