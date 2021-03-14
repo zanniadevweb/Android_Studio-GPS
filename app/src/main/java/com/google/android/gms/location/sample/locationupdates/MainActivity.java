@@ -17,7 +17,6 @@
 package com.google.android.gms.location.sample.locationupdates;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -29,18 +28,13 @@ import android.os.Looper;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.snackbar.Snackbar;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,13 +57,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 
@@ -92,26 +81,26 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
-     * Code used in requesting runtime permissions.
+     * Constante utilisée pour faire les demandes de permissions en temps réel.
      */
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     /**
-     * Constant used in the location settings dialog.
+     * Constante utilisée dans les paramètres de l'interface de localisation.
      */
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000; // Paramètre par défaut : 1 seconde
 
     /**
-     * The fastest rate for active location updates. Exact. Updates will never be more frequent
-     * than this value.
+     * Le taux le plus rapide pour les mises à jour de la localisation. Exact.
+     * Les mises à jour ne seront jamais plus fréquentes que cette valeur.
      */
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2; // Paramètre par défaut : Toutes les demi-secondes
 
     // Keys for storing activity state in the Bundle.
     private final static String KEY_REQUESTING_LOCATION_UPDATES = "requesting-location-updates";
@@ -119,37 +108,37 @@ public class MainActivity extends AppCompatActivity {
     private final static String KEY_LAST_UPDATED_TIME_STRING = "last-updated-time-string";
 
     /**
-     * Provides access to the Fused Location Provider API.
+     * Fournit l'accès à l'API de localisation : 'Fused Location Provider API'.
      */
     private FusedLocationProviderClient mFusedLocationClient;
 
     /**
-     * Provides access to the Location Settings API.
+     * Fournit l'accès aux paramètres de l'API.
      */
     private SettingsClient mSettingsClient;
 
     /**
-     * Stores parameters for requests to the FusedLocationProviderApi.
+     * Stocke les paramètres pour les demandes propres à l'API de localisation 'Fused Location Provider API'.
      */
     private LocationRequest mLocationRequest;
 
     /**
-     * Stores the types of location services the client is interested in using. Used for checking
-     * settings to determine if the device has optimal location settings.
+     * Stocke les types des services de localisation auquel le client pourrait être intéressé d'utiliser. Utiliser pour vérifier
+     * les paramètres qui déterminent si l'appareil a des paramètres optimals pour la localisation.
      */
     private LocationSettingsRequest mLocationSettingsRequest;
 
     /**
-     * Callback for Location events.
+     * Appel de retour pour les événements de localisation.
      */
     private LocationCallback mLocationCallback;
 
     /**
-     * Represents a geographical location.
+     * Represente la coordonnée géographique de la localisation de l'utilisateur.
      */
     private Location mCurrentLocation;
 
-    // UI Widgets.
+    // Widgets de l'UI.
     private Button mStartUpdatesButton;
     private Button mStopUpdatesButton;
     private Button RegenererPositionSalles;
@@ -164,8 +153,8 @@ public class MainActivity extends AppCompatActivity {
     private String mLastUpdateTimeLabel;
 
     /**
-     * Tracks the status of the location updates request. Value changes when the user presses the
-     * Start Updates and Stop Updates buttons.
+     * Récupère le statut de la demande de localisation. La valeur change quand l'utilisateur appuie sur :
+     * les boutons de "commencerLocalisation" et "arreterLocalisation".
      */
     private Boolean mRequestingLocationUpdates;
 
@@ -186,26 +175,28 @@ public class MainActivity extends AppCompatActivity {
         ImageView imgv5 = findViewById(R.id.imageViewSalleVerte2);
         ImageView imgv6 = findViewById(R.id.moi2);
 
-        View[] views1 = {imgv1, imgv3, imgv4, imgv6 };
+        // Masque au démarrage de l'application les salles rouges et la position de l'utilisateur (localisation pas encore démarrée)
+        View[] views1 = { imgv1, imgv3, imgv4, imgv6 };
         for (View view : views1) {
             view.setVisibility(View.INVISIBLE);
         }
 
-        View[] views2 = {imgv2, imgv5   };
+        // Affiche au démarrage de l'application les salles vertes
+        View[] views2 = { imgv2, imgv5 };
         for (View view : views2) {
             view.setVisibility(View.VISIBLE);
         }
 
-        // Locate the UI widgets.
-        mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
-        mStopUpdatesButton = (Button) findViewById(R.id.stop_updates_button);
+        // Localiser les widgets de l'UI.
+        mStartUpdatesButton = (Button) findViewById(R.id.commencer_localisation_bouton);
+        mStopUpdatesButton = (Button) findViewById(R.id.arreter_localisation_bouton);
         RegenererPositionSalles = (Button) findViewById(R.id.regenererPositionsSalles);
         GenererUnNombre = (Button) findViewById(R.id.generernombrealeatoire);
         mLatitudeTextView = (TextView) findViewById(R.id.latitude_text);
         mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
         mLastUpdateTimeTextView = (TextView) findViewById(R.id.last_update_time_text);
 
-        // Set labels.
+        // Définir les labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
         mLongitudeLabel = getResources().getString(R.string.longitude_label);
         mLastUpdateTimeLabel = getResources().getString(R.string.last_update_time_label);
@@ -213,42 +204,40 @@ public class MainActivity extends AppCompatActivity {
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
 
-        // Update values using data stored in the Bundle.
+        // Mettre à jour les valeurs en utilisant les données stockées dans le Bundle.
         updateValuesFromBundle(savedInstanceState);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
 
-        // Kick off the process of building the LocationCallback, LocationRequest, and
-        // LocationSettingsRequest objects.
+        // Met en route le procédé de mise en route des objets de 'LocationCallback', 'LocationRequest', et 'LocationSettingsRequest'
         createLocationCallback();
         createLocationRequest();
         buildLocationSettingsRequest();
     }
 
     /**
-     * Updates fields based on data stored in the bundle.
+     * Met à jour les champs sur la base des données stockées dans le bundle.
      *
-     * @param savedInstanceState The activity state saved in the Bundle.
+     * @param savedInstanceState L'état de l'activité est sauvée dans le bundle.
      */
     private void updateValuesFromBundle(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
-            // the Start Updates and Stop Updates buttons are correctly enabled or disabled.
+            // Met à jour la valeur de 'mRequestingLocationUpdates' du Bundle, et assure que
+            // 'commencerLocalisation' et 'arreterLocalisation' ont été correctement activé ou désactivé.
             if (savedInstanceState.keySet().contains(KEY_REQUESTING_LOCATION_UPDATES)) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean(
                         KEY_REQUESTING_LOCATION_UPDATES);
             }
 
-            // Update the value of mCurrentLocation from the Bundle and update the UI to show the
-            // correct latitude and longitude.
+            // Met à jour mCurrentLocation du Bundle et met à jour à l'UI pour monter la
+            // localisation et latitude correcte.
             if (savedInstanceState.keySet().contains(KEY_LOCATION)) {
-                // Since KEY_LOCATION was found in the Bundle, we can be sure that mCurrentLocation
-                // is not null.
+                // Comme KEY_LOCATION est trouvé dans le bundle, on veut être sûr que mCurrentLocation ne soit pas nul
                 mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             }
 
-            // Update the value of mLastUpdateTime from the Bundle and update the UI.
+            // Met à jour les valeurs de mLastUpdateTime du Bundle et met à jour l'UI.
             if (savedInstanceState.keySet().contains(KEY_LAST_UPDATED_TIME_STRING)) {
                 mLastUpdateTime = savedInstanceState.getString(KEY_LAST_UPDATED_TIME_STRING);
             }
@@ -257,36 +246,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Sets up the location request. Android has two location request settings:
-     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
-     * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
-     * the AndroidManifest.xml.
+     * Met en place la demande de localisation. Android a deux types de paramètres pour la localisation:
+     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. Ces paramètres contrôlent
+     * la précision de la localisation actuelle. Ce projet utilise ACCESS_FINE_LOCATION, tel que défini dans
+     * le AndroidManifest.xml.
      * <p/>
-     * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
-     * interval (5 seconds), the Fused Location Provider API returns location updates that are
-     * accurate to within a few feet.
+     * Quand le paramètre ACCESS_FINE_LOCATION est spécifié, combiné avec un interval de mise à jour rapide
+     * (5 secondes), l'API 'Fused Location Provider API' retourne des mises à jour de localisation
+     * qui sont précises à quelques mètres près.
      * <p/>
-     * These settings are appropriate for mapping applications that show real-time location
-     * updates.
+     * Ces paramètres sont appropriés pour des applications de cartographie qui montrent une localisation
+     * avec des mises à jour en temps réel.
      */
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
 
-        // Sets the desired interval for active location updates. This interval is
-        // inexact. You may not receive updates at all if no location sources are available, or
-        // you may receive them slower than requested. You may also receive updates faster than
-        // requested if other applications are requesting location at a faster interval.
+        // Met l'intervalle de temps désiré pour les mises à jour de localisation. Cet intervalle est
+        // inexacte. Vous pourrez ne recevoir aucune localisation s'il y a pas de données de localisation disponibles;
+        // ou vous pourrez les recevoir plus tardivement que prévu. Vous pourrez aussi recevoir ces données plus rapidement
+        // que prévu si d'autres applications demandent une localisation à un intervall de temps plus rapide.
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
 
-        // Sets the fastest rate for active location updates. This interval is exact, and your
-        // application will never receive updates faster than this value.
+        // Met à jour l'intervalle le plus rapide pour les mises à jour de localisation. Cet intervalle est exact, et votre
+        // application ne recevra jamais de valeurs plus rapides que celle-ci.
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     /**
-     * Creates a callback for receiving location events.
+     * Créé un appel de retour pour recevoir les événements de localisation
      */
     private void createLocationCallback() {
         mLocationCallback = new LocationCallback() {
@@ -302,9 +291,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Uses a {@link com.google.android.gms.location.LocationSettingsRequest.Builder} to build
-     * a {@link com.google.android.gms.location.LocationSettingsRequest} that is used for checking
-     * if a device has the needed location settings.
+     * Utilise un {@link com.google.android.gms.location.LocationSettingsRequest.Builder} pour construire
+     * un {@link com.google.android.gms.location.LocationSettingsRequest} qui est utilisé pour vérifier
+     * que l'appareil a les bons paramètres de localisation.
      */
     private void buildLocationSettingsRequest() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
@@ -316,12 +305,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            // Check for the integer request code originally supplied to startResolutionForResult().
+            // Vérifie que le code Integer de la requête a été précédement initialisée pour startResolutionForResult().
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         Log.i(TAG, "User agreed to make required location settings changes.");
-                        // Nothing to do. startLocationupdates() gets called in onResume again.
+                        // Rien à faire. startLocationupdates() gets called in onResume again.
                         break;
                     case Activity.RESULT_CANCELED:
                         Log.i(TAG, "User chose not to make required location settings changes.");
@@ -334,33 +323,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the Start Updates button and requests start of location updates. Does nothing if
-     * updates have already been requested.
+     * Prend en charge le bouton commencerLocalisation et demande une mise à jour des données de localisation. Ne fait rien si
+     * les mises à jour ont déjà été demandées.
      */
-    public void startUpdatesButtonHandler(View view) {
+    public void commencerLocalisationBouton(View view) {
         if (!mRequestingLocationUpdates) {
             mRequestingLocationUpdates = true;
             setButtonsEnabledState();
-            startLocationUpdates();
+            commencerLocalisation();
         }
     }
 
     /**
-     * Handles the Stop Updates button, and requests removal of location updates.
+     * Gère le bouton 'arreterLocalisation' et demande l'arrêt des mises à jour de localisation.
      */
-    public void stopUpdatesButtonHandler(View view) {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
-        stopLocationUpdates();
+    public void arreterLocalisationBouton(View view) {
+        // C'est une bonne pratique que d'enlever les demandes de localisation quand l'activité est en pause ou
+        // à l'état d'arrêt. Cela permet d'augmenter la performance de la batterie et cela est particulièrement recommandé
+        // pour les applications qui demandent des mises à jour de localisation fréquentes.
+        arreterLocalisation();
     }
 
     /**
-     * Requests location updates from the FusedLocationApi. Note: we don't call this unless location
-     * runtime permission has been granted.
+     * Demande les mises à jour de localisation à l'API 'FusedLocationApi'. Note: on ne l'appelle pas à moins que
+     * la permission de localisation n'ait été accordée.
      */
-    private void startLocationUpdates() {
-        // Begin by checking if the device has the necessary location settings.
+    private void commencerLocalisation() {
+        // Commence par vérifier si l'appareil a les permissions nécessaires pour la localisation.
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
                     @Override
@@ -405,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Updates all UI fields.
+     * Met à jour tous les champs de l'UI
      */
     private void updateUI() {
         setButtonsEnabledState();
@@ -413,18 +402,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Disables both buttons when functionality is disabled due to insuffucient location settings.
-     * Otherwise ensures that only one button is enabled at any time. The Start Updates button is
-     * enabled if the user is not requesting location updates. The Stop Updates button is enabled
-     * if the user is requesting location updates.
+     * Désactive les deux boutons quand la fonctionnalité est désactivée en raison de paramètres de localisation insuffisants.
+     * Sinon cela assure que seulement un bouton soit actif à la fois. Le bouton 'commencerLocalisation'
+     * est activable si l'utilisateur n'a pas demandé de mises à jour de localisation. Le bouton 'arreterLocalisation'
+     *  est activable si l'utilisateur a demandé des mises à jour de localisation.
      */
     private void setButtonsEnabledState() {
-        if (mRequestingLocationUpdates) {
+        if (mRequestingLocationUpdates) { // Si la localisation est arrêtée
             mStartUpdatesButton.setEnabled(false);
             mStopUpdatesButton.setEnabled(true);
             RegenererPositionSalles.setEnabled(true);
             GenererUnNombre.setEnabled(false);
-        } else {
+        } else { // Si la localisation est en cours
             mStartUpdatesButton.setEnabled(true);
             mStopUpdatesButton.setEnabled(false);
             RegenererPositionSalles.setEnabled(false);
@@ -437,9 +426,9 @@ public class MainActivity extends AppCompatActivity {
             ImageView imgv5 = findViewById(R.id.imageViewSalleVerte2);
             ImageView imgv6 = findViewById(R.id.moi2);
             TextView tv1 = findViewById(R.id.nombrePersonnesActuelSalle1);
-            tv1.setText(String.valueOf(Modele.compteurEleveSalle1));
+            tv1.setText(String.valueOf(Salle.compteurEleveSalle1));
             TextView tv2 = findViewById(R.id.nombrePersonnesActuelSalle2);
-            tv2.setText(String.valueOf(Modele.compteurEleveSalle2));
+            tv2.setText(String.valueOf(Salle.compteurEleveSalle2));
             TextView tv3 = findViewById(R.id.librepaslibre1);
             TextView tv4 = findViewById(R.id.librepaslibre2);
 
@@ -453,33 +442,29 @@ public class MainActivity extends AppCompatActivity {
                 view.setVisibility(View.VISIBLE);
             }
 
-            tv3.setText("La Salle1 est libre");
-            tv4.setText("La Salle2 est libre");
+            tv3.setText(getString(R.string.estLibre1_label));
+            tv4.setText(getString(R.string.estLibre2_label));
 
-            Modele.compteurEleveSalle1 = Modele.randomPersonnesSalle1;
-            Modele.compteurEleveSalle2 = Modele.randomPersonnesSalle2;
+            Salle.compteurEleveSalle1 = Salle.randomPersonnesSalle1;
+            Salle.compteurEleveSalle2 = Salle.randomPersonnesSalle2;
         }
     }
 
     private void fixerPositionsSalles() {
-            final double latitudeTempsTConstant = Modele.latitudeTempsT;
-            final double longitudeTempsTConstant = Modele.longitudeTempsT;
-            Modele.latitudeCentreSalleUneDynamique=latitudeTempsTConstant;
-        Modele.longitudeCentreSalleUneDynamique=longitudeTempsTConstant;
-            Modele.latitudeCentreSalleDeuxDynamique=latitudeTempsTConstant + Modele.quinzeMetresLatitude;
-            Modele.longitudeCentreSalleDeuxDynamique=longitudeTempsTConstant + Modele.quinzeMetresLongitude;
-       // Modele.latitudeCentreSalleUneDynamique=-1.5199319863357297; // -1.5200829429512535 ,
-       // Modele.longitudeCentreSalleUneDynamique=43.479010257562486; // 43.478821967365974
-      //  Modele.latitudeCentreSalleDeuxDynamique=-1.5195564758754594; // -1.5202701464770927 , ,
-      //  Modele.longitudeCentreSalleDeuxDynamique=43.47909589264311; // 43.47881869460403
+            final double latitudeTempsTConstant = Localisation.latitudeTempsT;
+            final double longitudeTempsTConstant = Localisation.longitudeTempsT;
+            Salle.latitudeCentreSalleUneDynamique=latitudeTempsTConstant;
+            Salle.longitudeCentreSalleUneDynamique=longitudeTempsTConstant;
+            Salle.latitudeCentreSalleDeuxDynamique=latitudeTempsTConstant + Salle.quinzeMetresLatitude;
+            Salle.longitudeCentreSalleDeuxDynamique=longitudeTempsTConstant + Salle.quinzeMetresLongitude;
     }
 
     public void regenererPositionsSalles(View view) {
-        Modele.valeursLongLatAttribuees = true;
+        Localisation.valeursLongLatAttribuees = true;
     }
 
     /**
-     * Sets the value of the UI fields for the location latitude, longitude and last update time.
+     * Met les valeurs des champs de l'UI pour la localisation (latitude, longitude) et temps de dernière localisation en temps réel.
      */
     private void updateLocationUI() {
         if (mCurrentLocation != null) {
@@ -490,11 +475,11 @@ public class MainActivity extends AppCompatActivity {
 
             mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel, mCurrentLocation.getLatitude()));
 
-            Modele.updatetime = mLastUpdateTime;
+            Localisation.updatetime = mLastUpdateTime;
 
-            if (Modele.valeursLongLatAttribuees) {
+            if (Localisation.valeursLongLatAttribuees) {
                 fixerPositionsSalles();
-                Modele.valeursLongLatAttribuees = false;
+                Localisation.valeursLongLatAttribuees = false;
             }
 
             mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel, mCurrentLocation.getLongitude()));
@@ -504,85 +489,20 @@ public class MainActivity extends AppCompatActivity {
             /* ----------------------------------------- STOCKAGE COORDONNES DES SALLES ------------------------------------------------------------*/
             /* -------------------------------------------------------------------------------------------------------------------------------------*/
 
-            HashMap<String, Double> LongitudeSalles = new HashMap<>();
-            HashMap<String, Double> LatitudeSalles = new HashMap<>();
+            final double longitudeCentreSalleConstant1 = Salle.longitudeCentreSalleUneDynamique; // Centre salle (x) (Fixé à la même position que l'utilisateur)
+            final double latitudeCentreSalleConstant1 = Salle.latitudeCentreSalleUneDynamique; // Centre salle (y) (Fixé à la même position que l'utilisateur)
 
-            final double longitudeCentreSalleConstant1 = Modele.longitudeCentreSalleUneDynamique; // Centre salle (x) (Fixé à la même position que l'utilisateur)
-            final double latitudeCentreSalleConstant1 = Modele.latitudeCentreSalleUneDynamique; // Centre salle (y) (Fixé à la même position que l'utilisateur)
+            final double longitudeCentreSalleConstant2 = Salle.longitudeCentreSalleDeuxDynamique; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en latitude)
+            final double latitudeCentreSalleConstant2 = Salle.latitudeCentreSalleDeuxDynamique; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en longitude)
 
-            //final double longitudeCentreSalleConstant1 = 43.4790169876426; // Centre salle (x) (Fixé à la même position que l'utilisateur)
-            //final double latitudeCentreSalleConstant1 = -1.5199598282479023; // Centre salle (y) (Fixé à la même position que l'utilisateur)
+            double maLatitudeTresPrecise = mCurrentLocation.getLatitude();
+            double maLatitudeMoinsPrecise = (int)(Math.round(maLatitudeTresPrecise * 10000000))/10000000.0; // Récupérer le résultat de ma localisation (latitude) 7 chiffres après la virgule
+            Localisation.longitudeTempsT = maLatitudeMoinsPrecise;
+            double maLongitudeTresPrecise = mCurrentLocation.getLongitude();
+            double maLongitudeMoinsPrecise = (int)(Math.round(maLongitudeTresPrecise * 10000000))/10000000.0; // Récupérer le résultat de ma localisation (longitude) 7 chiffres après la virgule
+            Localisation.latitudeTempsT = maLongitudeMoinsPrecise;
 
-            final double longitudeCentreSalleConstant2 = Modele.longitudeCentreSalleDeuxDynamique; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en latitude)
-            final double latitudeCentreSalleConstant2 = Modele.latitudeCentreSalleDeuxDynamique; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en longitude)
-
-            //final double longitudeCentreSalleConstant2 = 43.478717258988226; // Centre salle (x) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en latitude)
-            //final double latitudeCentreSalleConstant2 = -1.5198391311262884; // Centre salle (y) (Calculé à partir de la coordonnée de l'utilisateur + 15 mètres converti en une distance en longitude)
-
-            float[] distance = new float[1];
-
-            double testLat = mCurrentLocation.getLatitude();
-            double longmoi = (int)(Math.round(testLat * 10000000))/10000000.0; // Récupérer le résultat Google Maps 7 chiffres après la virgule
-            Modele.longitudeTempsT = longmoi;
-            double testLong = mCurrentLocation.getLongitude();
-            double latmoi = (int)(Math.round(testLong * 10000000))/10000000.0; // Récupérer le résultat Google Maps 7 chiffres après la virgule
-            Modele.latitudeTempsT = latmoi;
-
-            /*
-            Location.distanceBetween(
-                    latmoi , // Moi
-                    longmoi, // Moi
-                    -1.5198117, // Dehors devant chez moi
-                    43.4790377, // Dehors devant chez moi
-                    distance); // Résultat = distance entre deux points
-
-            Log.d ("DISTANCE", "dist" + distance[0]);
-             */
-
-            LongitudeSalles.put("Salle1", latitudeCentreSalleConstant1); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
-            LatitudeSalles.put("Salle1", longitudeCentreSalleConstant1); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
-
-            LongitudeSalles.put("Salle2", latitudeCentreSalleConstant2); // Latitude du point dans une salle (c'est = à mon emplacement actuel)
-            LatitudeSalles.put("Salle2", longitudeCentreSalleConstant2); // Longitude du point dans une salle (c'est = à mon emplacement actuel)
-
-            Log.d ("1","long1 : " + longitudeCentreSalleConstant1);
-            Log.d ("2","lat1 : " + latitudeCentreSalleConstant1);
-
-            Log.d ("3","long2 : " + longitudeCentreSalleConstant2);
-            Log.d ("4","lat2 : " + latitudeCentreSalleConstant2);
-
-
-            // ---------------- A CORRIGER --------------
-
-            // Obtenir la première valeur du Hash Map
-            /*
-            Iterator<String> iteratorLong = LongitudeSalles.keySet().iterator();
-            Iterator<String> iteratorLat = LongitudeSalles.keySet().iterator();
-             */
-            Iterator<String> iteratorNomSalle = LongitudeSalles.keySet().iterator();
-/*
-            Double valueLongitude1 = null;
-            Double valueLongitude2 = null;
-            if(iteratorLong.hasNext()){
-                valueLongitude1 = LongitudeSalles.get( iteratorLong.next() );
-                valueLongitude2 = LongitudeSalles.get(1);
-            }
-
-            Double valueLatitude1 = null;
-            Double valueLatitude2 = null;
-            if(iteratorLat.hasNext()){
-                valueLatitude1 = LatitudeSalles.get( iteratorLat.next() );
-                valueLatitude2 = LongitudeSalles.get(1);
-            }
-*/
-            String key = null;
-            if(iteratorNomSalle.hasNext()){
-                key = iteratorNomSalle.next();
-            }
-
-            // ---------------- A CORRIGER --------------
-
-            Integer rayonSalle = 10; // Le rayon d'une salle en mètres
+            int rayonSalle = 10; // Le rayon d'une salle en mètres
 
             float[] distanceSalle1 = new float[1];
             float[] distanceSalle2 = new float[1];
@@ -592,60 +512,49 @@ public class MainActivity extends AppCompatActivity {
             /* -------------------------------------------------------------------------------------------------------------------------------------*/
 
             TextView tv1 = findViewById(R.id.longitudeValeurSalle1);
-            //tv1.setText(String.valueOf(valueLongitude1)); // ---------------- A CORRIGER --------------
             tv1.setText(String.valueOf(longitudeCentreSalleConstant1));
 
             TextView tv2 = findViewById(R.id.latitudeValeurSalle1);
-            //tv2.setText(String.valueOf(valueLatitude1)); // ---------------- A CORRIGER --------------
             tv2.setText(String.valueOf(latitudeCentreSalleConstant1));
 
             Location.distanceBetween(
-                    latmoi, // Latitude de départ (Moi)
-                    longmoi, // Longitude de départ (Moi)
+                    maLongitudeMoinsPrecise, // Latitude de départ (Moi)
+                    maLatitudeMoinsPrecise, // Longitude de départ (Moi)
                     latitudeCentreSalleConstant1, // Latitude de fin (salle)
                     longitudeCentreSalleConstant1, // Longitude de fin (salle)
                     distanceSalle1); // Résultat = distance entre deux points
 
-
-            Log.d ("distsalle1", "dist" + distanceSalle1);
-
-            TextView tv8 = findViewById(R.id.malocalisationsalle1);
+            TextView tv8 = findViewById(R.id.maDistanceSalle1);
             tv8.setText("Je suis à environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci");
 
             // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
             if (distanceSalle1[0] < rayonSalle) { // || && Modele.estDansSalle1
-                Modele.compteurEleveSalle1 = Modele.randomPersonnesSalle1;
-                Modele.compteurEleveSalle1++;
+                Salle.compteurEleveSalle1 = Salle.randomPersonnesSalle1;
+                Salle.compteurEleveSalle1++;
                 TextView tv0 = findViewById(R.id.nombrePersonnesActuelSalle1);
-                tv0.setText(String.valueOf(Modele.compteurEleveSalle1));
-                Log.d("estDansSalle", "Vous êtes dans la " + key);
-                Log.d("élève", "Vous êtes le " + Modele.compteurEleveSalle1 + "e élève dans cette salle");
+                tv0.setText(String.valueOf(Salle.compteurEleveSalle1));
                 Integer limiteNombreEleveSalle1 = 10;
-                if (Modele.compteurEleveSalle1 > limiteNombreEleveSalle1) {
-                    Log.d("salleIndisponible", "Désolé, la salle vous est fermée d'accès car la limite est de " + limiteNombreEleveSalle1 + " élèves dans cette salle");
+                if (Salle.compteurEleveSalle1 > limiteNombreEleveSalle1) {
                     ImageView imgv1 = findViewById(R.id.imageViewSalleVerte1);
                     imgv1.setVisibility(View.INVISIBLE);
                     ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
                     imgv2.setVisibility(View.VISIBLE);
                     TextView tv3 = findViewById(R.id.librepaslibre1);
-                    //tv3.setText("La " + key + " est indisponible"); // ---------------- A CORRIGER --------------
-                    tv3.setText("La Salle1 est indisponible");
+                    tv3.setText(getString(R.string.estPasLibre1_label));
                 }
-                if (Modele.compteurEleveSalle1 <= limiteNombreEleveSalle1) {
+                if (Salle.compteurEleveSalle1 <= limiteNombreEleveSalle1) {
                     ImageView imgv2 = findViewById(R.id.imageViewSalleRouge1);
                     imgv2.setVisibility(View.INVISIBLE);
                     ImageView imgv1 = findViewById(R.id.imageViewSalleVerte1);
                     imgv1.setVisibility(View.VISIBLE);
                     TextView tv3 = findViewById(R.id.librepaslibre1);
-                    //tv3.setText("La " + key + " est libre pour l'instant"); // ---------------- A CORRIGER --------------
-                    tv3.setText("La Salle1 est libre");
+                    tv3.setText(getString(R.string.estLibre1_label));
                 }
                 ImageView imgv3 = findViewById(R.id.moi1);
                 imgv3.setVisibility(View.VISIBLE);
                 TextView tv4 = findViewById(R.id.mapositionsalle1);
-                //tv4.setText("Je suis dans la " + key + " à environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci"); // ---------------- A CORRIGER --------------
-                tv4.setText("Je suis dans la Salle1");
-                Modele.estDansSalle2 = false;
+                tv4.setText(getString(R.string.dansSalle1_label));
+                Localisation.estDansSalle2 = false;
             }
             if (distanceSalle1[0] > rayonSalle) { // || && !(Modele.estDansSalle1)
                 ImageView imgv1 = findViewById(R.id.imageViewSalleVerte1);
@@ -654,12 +563,9 @@ public class MainActivity extends AppCompatActivity {
                 imgv2.setVisibility(View.INVISIBLE);
                 ImageView imgv3 = findViewById(R.id.moi1);
                 imgv3.setVisibility(View.INVISIBLE);
-                //TextView tv4 = findViewById(R.id.mapositionsalle); // ---------------- A CORRIGER --------------
-                //tv4.setText("Je ne suis PAS dans la " + key);
                 TextView tv4 = findViewById(R.id.mapositionsalle1);
-                //tv4.setText("Je ne suis PAS dans la " + key + ". Je suis à une distance d'environ " + distanceSalle1[0]/2 + " mètres du centre de celle-ci"); // ---------------- A CORRIGER --------------
-                tv4.setText("Je ne suis PAS dans la Salle1");
-                Modele.estDansSalle2 = true;
+                tv4.setText(getString(R.string.pasSalle1_label));
+                Localisation.estDansSalle2 = true;
             }
 
 
@@ -667,59 +573,51 @@ public class MainActivity extends AppCompatActivity {
             /* ----------------------------------------- SALLE 2 -----------------------------------------------------------------------------------*/
             /* -------------------------------------------------------------------------------------------------------------------------------------*/
 
-
             TextView tv3 = findViewById(R.id.longitudeValeurSalle2);
-            //tv3.setText(String.valueOf(valueLongitude2));  // ---------------- A CORRIGER --------------
             tv3.setText(String.valueOf(longitudeCentreSalleConstant2));
 
 
             TextView tv4 = findViewById(R.id.latitudeValeurSalle2);
-            //tv4.setText(String.valueOf(valueLatitude2)); // ---------------- A CORRIGER --------------
             tv4.setText(String.valueOf(latitudeCentreSalleConstant2));
 
             Location.distanceBetween(
-                    latmoi, // Latitude de départ (Moi)
-                    longmoi, // Longitude de départ (Moi)
+                    maLongitudeMoinsPrecise, // Latitude de départ (Moi)
+                    maLatitudeMoinsPrecise, // Longitude de départ (Moi)
                     latitudeCentreSalleConstant2, // Latitude de fin (salle)
                     longitudeCentreSalleConstant2, // Longitude de fin (salle)
                     distanceSalle2); // Résultat = distance entre deux points
 
-            Log.d ("distsalle2", "dist" + distanceSalle2);
-
-            TextView tv7 = findViewById(R.id.malocalisationsalle2);
+            TextView tv7 = findViewById(R.id.maDistanceSalle2);
             tv7.setText("Je suis à environ " + distanceSalle2[0]/2 + " mètres du centre de celle-ci");
 
             // Si les coordonnées où je suis (latitude, longitude) sont égales à celles de la salle1... alors.. je me trouve dans cette salle
             if (distanceSalle2[0] < rayonSalle) { // || && Modele.estDansSalle2
-                Modele.compteurEleveSalle2 = Modele.randomPersonnesSalle2;
-                Modele.compteurEleveSalle2++;
+                Salle.compteurEleveSalle2 = Salle.randomPersonnesSalle2;
+                Salle.compteurEleveSalle2++;
                 TextView tv0 = findViewById(R.id.nombrePersonnesActuelSalle2);
-                tv0.setText(String.valueOf(Modele.compteurEleveSalle2));
-                Log.d("estDansSalle", "Vous êtes dans la " + key);
-                Log.d("élève", "Vous êtes le " + Modele.compteurEleveSalle2 + "e élève dans cette salle");
+                tv0.setText(String.valueOf(Salle.compteurEleveSalle2));
                 Integer limiteNombreEleveSalle2 = 10;
-                if (Modele.compteurEleveSalle2 > limiteNombreEleveSalle2) {
-                    Log.d("salleIndisponible", "Désolé, la salle vous est fermée d'accès car la limite est de " + limiteNombreEleveSalle2 + " élèves dans cette salle");
+                if (Salle.compteurEleveSalle2 > limiteNombreEleveSalle2) {
                     ImageView imgv2 = findViewById(R.id.imageViewSalleVerte2);
                     imgv2.setVisibility(View.INVISIBLE);
                     ImageView imgv3 = findViewById(R.id.imageViewSalleRouge2);
                     imgv3.setVisibility(View.VISIBLE);
                     TextView tv5 = findViewById(R.id.librepaslibre2);
-                    tv5.setText("La " + key + " est indisponible");
+                    tv5.setText(getString(R.string.estPasLibre2_label));
                 }
-                if (Modele.compteurEleveSalle2 <= limiteNombreEleveSalle2) {
+                if (Salle.compteurEleveSalle2 <= limiteNombreEleveSalle2) {
                     ImageView imgv2 = findViewById(R.id.imageViewSalleVerte2);
                     imgv2.setVisibility(View.VISIBLE);
                     ImageView imgv3 = findViewById(R.id.imageViewSalleRouge2);
                     imgv3.setVisibility(View.INVISIBLE);
                     TextView tv5 = findViewById(R.id.librepaslibre2);
-                    tv5.setText("La " + key + " est libre");
+                    tv5.setText(getString(R.string.estLibre2_label));
                 }
                 ImageView imgv4 = findViewById(R.id.moi2);
                 imgv4.setVisibility(View.VISIBLE);
                 TextView tv6 = findViewById(R.id.mapositionsalle2);
-                tv6.setText("Je suis dans la " + key);
-                Modele.estDansSalle1 = false;
+                tv6.setText(getString(R.string.dansSalle2_label));
+                Localisation.estDansSalle1 = false;
             }
             if (distanceSalle2[0] > rayonSalle) { // || && !(Modele.estDansSalle2
                 ImageView imgv3 = findViewById(R.id.imageViewSalleRouge2);
@@ -728,39 +626,37 @@ public class MainActivity extends AppCompatActivity {
                 imgv2.setVisibility(View.VISIBLE);
                 ImageView imgv4 = findViewById(R.id.moi2);
                 imgv4.setVisibility(View.INVISIBLE);
-                //TextView tv6 = findViewById(R.id.mapositionsalle2);
-                //tv6.setText("Je ne suis PAS dans la " + key);
                 TextView tv6 = findViewById(R.id.mapositionsalle2);
-                tv6.setText("Je ne suis PAS dans la " + key );
-                Modele.estDansSalle1 = true;
+                tv6.setText(getString(R.string.pasSalle2_label));
+                Localisation.estDansSalle1 = true;
             }
 
         }
     }
 
     public void onGenerateRandomNumber(View view) {
-        Modele.randomPersonnesSalle1 = new Random().nextInt(10) + 1; // [0, 1] + 1 => [1, 2] : Minimum 1 (si [0] + 1) et maximum 10 (si [1] + 1)
-        Modele.randomPersonnesSalle2 = new Random().nextInt(10) + 1; // [0, 1] + 1 => [1, 2] : Minimum 1 (si [0] + 1) et maximum 10 (si [1] + 1)
+        Salle.randomPersonnesSalle1 = new Random().nextInt(10) + 1; // [0, 1] + 1 => [1, 2] : Minimum 1 (si [0] + 1) et maximum 10 (si [1] + 1)
+        Salle.randomPersonnesSalle2 = new Random().nextInt(10) + 1; // [0, 1] + 1 => [1, 2] : Minimum 1 (si [0] + 1) et maximum 10 (si [1] + 1)
         TextView tv1 = findViewById(R.id.nombrePersonnesActuelSalle1);
-        tv1.setText(String.valueOf(Modele.randomPersonnesSalle1));
+        tv1.setText(String.valueOf(Salle.randomPersonnesSalle1));
         TextView tv2 = findViewById(R.id.nombrePersonnesActuelSalle2);
-        tv2.setText(String.valueOf(Modele.randomPersonnesSalle2));
+        tv2.setText(String.valueOf(Salle.randomPersonnesSalle2));
     }
 
 
 
     /**
-     * Removes location updates from the FusedLocationApi.
+     * Enlève les mises à jour de localisation pour l'API 'FusedLocationApi'.
      */
-    private void stopLocationUpdates() {
+    private void arreterLocalisation() {
         if (!mRequestingLocationUpdates) {
-            Log.d(TAG, "stopLocationUpdates: updates never requested, no-op.");
+            Log.d(TAG, "arreterLocalisation: mises à jour jamais demandées, pas de résultat.");
             return;
         }
 
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
+        // C'est une bonne pratique que d'enlever les demandes de localisation quand l'activité est en pause ou
+        // à l'état d'arrêt. Cela permet d'augmenter la performance de la batterie et cela est particulièrement recommandé
+        // pour les applications qui demandent des mises à jour de localisation fréquentes.
         mFusedLocationClient.removeLocationUpdates(mLocationCallback)
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
@@ -776,10 +672,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // Within {@code onPause()}, we remove location updates. Here, we resume receiving
         // location updates if the user has requested them.
-        if (mRequestingLocationUpdates && checkPermissions()) {
-            startLocationUpdates();
-        } else if (!checkPermissions()) {
-            requestPermissions();
+        if (mRequestingLocationUpdates && verifierPermissions()) {
+            commencerLocalisation();
+        } else if (!verifierPermissions()) {
+            demanderPermissions();
         }
 
         updateUI();
@@ -788,12 +684,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // Remove location updates to save battery.
-        stopLocationUpdates();
+        // Enlèves les mises à jour de localisation pour économiser de la batterie.
+        arreterLocalisation();
     }
 
     /**
-     * Stores activity data in the Bundle.
+     * Stocke les données de l'activité dans le bundle.
      */
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
@@ -805,9 +701,9 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Shows a {@link Snackbar}.
      *
-     * @param mainTextStringId The id for the string resource for the Snackbar text.
-     * @param actionStringId   The text of the action item.
-     * @param listener         The listener associated with the Snackbar action.
+     * @param mainTextStringId L'id pour la ressource string du texte de la Snackbar.
+     * @param actionStringId   Le texte de l'item d'action.
+     * @param listener         L'écouteur associé à l'action du Snackbar.
      */
     private void showSnackbar(final int mainTextStringId, final int actionStringId,
                               View.OnClickListener listener) {
@@ -819,23 +715,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Return the current state of the permissions needed.
+     * Retourne l'état actuel de la permission requise.
      */
-    private boolean checkPermissions() {
+    private boolean verifierPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestPermissions() {
+    private void demanderPermissions() {
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_FINE_LOCATION);
 
-        // Provide an additional rationale to the user. This would happen if the user denied the
-        // request previously, but didn't check the "Don't ask again" checkbox.
+        // Fournit une information supplémentaire à l'utilisateur. Cela arrivera si l'utilisateur refuse
+        // la requête précédente ou n'a pas coché la case : "Don't ask again".
         if (shouldProvideRationale) {
-            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            Log.i(TAG, "Affiche les permissions rationnelles pour fournir un contexte plus détaillé.");
             showSnackbar(R.string.permission_rationale,
                     android.R.string.ok, new View.OnClickListener() {
                         @Override
@@ -847,10 +743,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         } else {
-            Log.i(TAG, "Requesting permission");
-            // Request permission. It's possible this can be auto answered if device policy
-            // sets the permission in a given state or the user denied the permission
-            // previously and checked "Never ask again".
+            Log.i(TAG, "Demande de permission");
+            // Demande de permission. Il est possible que la réponse se fasse seule si les politiques de l'appareil
+            // mettent la permission dans un état donné ou que l'utilisateur a refusé la permission
+            // précédente et a coché la case "Never ask again".
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_REQUEST_CODE);
@@ -858,7 +754,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Callback received when a permissions request has been completed.
+     * Appel de retour reçu quand une demande de permission a été achevée.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -866,26 +762,26 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {
-                // If user interaction was interrupted, the permission request is cancelled and you
-                // receive empty arrays.
-                Log.i(TAG, "User interaction was cancelled.");
+                // Si l'interaction avec l'utilisateur est interrompue, la demande de permission est stoppée
+                // et vous allez recevoir des valeurs nulles.
+                Log.i(TAG, "L'interaction avec l'utilisateur a été annulé.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (mRequestingLocationUpdates) {
-                    Log.i(TAG, "Permission granted, updates requested, starting location updates");
-                    startLocationUpdates();
+                    Log.i(TAG, "Permission accordée, mises à jour permises, commencer la localisation");
+                    commencerLocalisation();
                 }
             } else {
-                // Permission denied.
+                // Permission refusée.
 
-                // Notify the user via a SnackBar that they have rejected a core permission for the
-                // app, which makes the Activity useless. In a real app, core permissions would
-                // typically be best requested during a welcome-screen flow.
+                // Avertit l'utilisateur via un SnackBar qu'ils ont rejetés une permission du 'Core' pour
+                // l'application, ce qui rend l'activité inutilisable. Dans une vraie application, les permissions de 'Core'
+                // seraient typiquement demandées via un process sur l'écran d'accueil.
 
-                // Additionally, it is important to remember that a permission might have been
-                // rejected without asking the user for permission (device policy or "Never ask
-                // again" prompts). Therefore, a user interface affordance is typically implemented
-                // when permissions are denied. Otherwise, your app could appear unresponsive to
-                // touches or interactions which have required permissions.
+                // De plus, il est important de se rappeler qu'une permision pourrait avoir été rejetée
+                // sans avoir demandé à l'utilisateur la permission (politque de l'appreil ou les messages du type
+                // "Never ask again"). En conséquence, l'apport de l'interface d'un utilisateur est typiquement implémenté
+                // quand les permissions ont été refusées. Autrement, votre application pourrait apparaître insensible
+                // aux interactions qui demandent des permissions.
                 showSnackbar(R.string.permission_denied_explanation,
                         R.string.settings, new View.OnClickListener() {
                             @Override

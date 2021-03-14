@@ -1,17 +1,6 @@
 package com.google.android.gms.location.sample.locationupdates;
 
-import com.google.android.gms.maps.model.LatLng;
-
-public class Modele {
-    public static double latitudeTempsT; // Ma position (x)
-    public static double longitudeTempsT; // Ma position (y)
-
-    public static boolean valeursLongLatAttribuees = true;
-    public static boolean estDansSalle1 = true;
-    public static boolean estDansSalle2 = true;
-
-    public static String updatetime = "";
-
+public class Salle {
     public static double latitudeCentreSalleUneDynamique; // Centre salle1 (x) (Fixé à la même position que l'utilisateur)
     public static double longitudeCentreSalleUneDynamique; // Centre salle1 (y) (Fixé à la même position que l'utilisateur)
 
