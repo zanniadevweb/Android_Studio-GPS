@@ -1,3 +1,12 @@
+Ce projet est basé sur le modèle GitHub de démonstration "Location Updates" à l'URL suivante :
+================
+
+https://github.com/android/location-samples
+================
+
+._______________.
+================
+
 Location Updates
 ================
 

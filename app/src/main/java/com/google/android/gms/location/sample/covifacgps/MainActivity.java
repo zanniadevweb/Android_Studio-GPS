@@ -14,7 +14,7 @@
   limitations under the License.
  */
 
-package com.google.android.gms.location.sample.locationupdates;
+package com.google.android.gms.location.sample.covifacgps;
 
 import android.Manifest;
 import android.app.Activity;

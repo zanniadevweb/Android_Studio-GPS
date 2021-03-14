@@ -1,6 +1,4 @@
-package com.google.android.gms.location.sample.locationupdates;
-
-import com.google.android.gms.maps.model.LatLng;
+package com.google.android.gms.location.sample.covifacgps;
 
 public class Localisation {
     // Mes coordonnées géographiques (latitude et longitude) en temps réel

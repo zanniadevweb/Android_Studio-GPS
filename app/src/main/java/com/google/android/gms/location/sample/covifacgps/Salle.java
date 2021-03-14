@@ -1,4 +1,4 @@
-package com.google.android.gms.location.sample.locationupdates;
+package com.google.android.gms.location.sample.covifacgps;
 
 public class Salle {
     // Latitude et longitude de la Salle 1
